@@ -1,0 +1,241 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Archivos de origen">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Archivos de encabezado">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="res">
+      <UniqueIdentifier>{ef6a2ef6-393f-4d99-ba72-bbcb40470cc7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="res\shaders">
+      <UniqueIdentifier>{526b5b50-176b-499b-96fb-67abc2d53129}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Archivos de encabezado\BaseGame">
+      <UniqueIdentifier>{45a56041-3226-418c-a0fb-d2214c8fa1e9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Archivos de encabezado\Entity">
+      <UniqueIdentifier>{182ff142-9393-4698-8e1f-1258e07d55f2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Archivos de encabezado\Entity\Entity2D">
+      <UniqueIdentifier>{f572b5e3-a300-4d50-a227-65995e1cb47e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Archivos de encabezado\Entity\Entity2D\Shape">
+      <UniqueIdentifier>{92c814b0-0f68-44c0-b21f-566e772fd50c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Archivos de encabezado\Program">
+      <UniqueIdentifier>{8a5fbfc2-e5d7-40f7-ad8e-cbf1c5df7499}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Archivos de encabezado\Renderer">
+      <UniqueIdentifier>{a0dbed98-97bc-43a6-a874-d2a9c76fc2be}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Archivos de encabezado\Window">
+      <UniqueIdentifier>{e2aedb09-33bf-4858-8c5f-76275c5842aa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Archivos de origen\BaseGame">
+      <UniqueIdentifier>{a4f9a7b6-2374-452a-b1e5-5d3c49332b8f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Archivos de origen\Entity">
+      <UniqueIdentifier>{d7933b28-854d-4a7f-83f1-7b29dd4c6800}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Archivos de origen\Entity\Entity2D">
+      <UniqueIdentifier>{53958464-1859-4bf9-9005-e09186739efd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Archivos de origen\Program">
+      <UniqueIdentifier>{7de803a6-cd74-4cac-962d-b8e249827cf4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Archivos de origen\Renderer">
+      <UniqueIdentifier>{9af04e4f-c999-4c58-9dbc-23f3bc9dcff3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Archivos de origen\Window">
+      <UniqueIdentifier>{2723fa5f-bc34-4aef-860a-fc1ca31e8c86}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Archivos de origen\Entity\Entity2D\Shape">
+      <UniqueIdentifier>{07a4887c-2ccb-47ff-a87a-4e10c4b6989a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Archivos de encabezado\Entity\Entity2D\Shape\Triangle">
+      <UniqueIdentifier>{9574b4d2-f45e-4e34-91e2-912db4888503}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Archivos de encabezado\Entity\Entity2D\Shape\Square">
+      <UniqueIdentifier>{bfc7c013-0e4d-43a9-abd2-45fae9535757}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Archivos de origen\Entity\Entity2D\Shape\Triangle">
+      <UniqueIdentifier>{221f60c5-f290-4c3e-997c-bcfd57a584ec}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Archivos de origen\Entity\Entity2D\Shape\Square">
+      <UniqueIdentifier>{7a9099df-7de9-43fe-bb35-d511f9c1c3f8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Archivos de origen\Buffers">
+      <UniqueIdentifier>{45966129-361d-457e-ad12-aa67d91c150d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Archivos de encabezado\Buffers">
+      <UniqueIdentifier>{c68e245e-d2fd-4a8a-9fff-6a9562b8d5aa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Archivos de encabezado\Input">
+      <UniqueIdentifier>{d7e88d80-7239-4f47-991f-50b09d4d8220}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Archivos de origen\Input">
+      <UniqueIdentifier>{26e4eacc-e9a8-46d0-b0c1-d583c3cfbea7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Archivos de encabezado\Sprite">
+      <UniqueIdentifier>{63d5e3ea-24e0-4ba8-b973-463c4ddd9ea9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Archivos de origen\Sprite">
+      <UniqueIdentifier>{e944f017-268c-44a0-a3c7-5019d141ec18}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="res\fragmentShader.shader">
+      <Filter>res\shaders</Filter>
+    </None>
+    <None Include="res\vertexShader.shader">
+      <Filter>res\shaders</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\BaseGame\BaseGame.h">
+      <Filter>Archivos de encabezado\BaseGame</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Window\Window.h">
+      <Filter>Archivos de encabezado\Window</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Renderer\Renderer.h">
+      <Filter>Archivos de encabezado\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Program\Program.h">
+      <Filter>Archivos de encabezado\Program</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Entity\Entity2D\Entity2D.h">
+      <Filter>Archivos de encabezado\Entity\Entity2D</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Entity\Entity.h">
+      <Filter>Archivos de encabezado\Entity</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Entity\Entity2D\Shape\Shape.h">
+      <Filter>Archivos de encabezado\Entity\Entity2D\Shape</Filter>
+    </ClInclude>
+    <ClInclude Include="src\RendererSingleton.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Entity\Entity2D\Shape\Square\Square.h">
+      <Filter>Archivos de encabezado\Entity\Entity2D\Shape\Square</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Entity\Entity2D\Shape\Triangle\Triangle.h">
+      <Filter>Archivos de encabezado\Entity\Entity2D\Shape\Triangle</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Vector2.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Exports.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="src\VertexArray.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Buffers\IndexBuffer.h">
+      <Filter>Archivos de encabezado\Buffers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Buffers\VertexBufferLayout.h">
+      <Filter>Archivos de encabezado\Buffers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Buffers\VertexBufferElement.h">
+      <Filter>Archivos de encabezado\Buffers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Buffers\VertexBuffer.h">
+      <Filter>Archivos de encabezado\Buffers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Input\InputManager.h">
+      <Filter>Archivos de encabezado\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Time\Time.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Sprite\Sprite.h">
+      <Filter>Archivos de encabezado\Sprite</Filter>
+    </ClInclude>
+    <ClInclude Include="src\stb_image.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Collisions\CollisionManager.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Animation\Animation.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="src\TimeSingleton.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Frame\Frame.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Vector3.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\Window\Window.cpp">
+      <Filter>Archivos de origen\Window</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Renderer\Renderer.cpp">
+      <Filter>Archivos de origen\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Program\Program.cpp">
+      <Filter>Archivos de origen\Program</Filter>
+    </ClCompile>
+    <ClCompile Include="src\BaseGame\BaseGame.cpp">
+      <Filter>Archivos de origen\BaseGame</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Entity\Entity2D\Entity2D.cpp">
+      <Filter>Archivos de origen\Entity\Entity2D</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Entity\Entity.cpp">
+      <Filter>Archivos de origen\Entity</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Entity\Entity2D\Shape\Shape.cpp">
+      <Filter>Archivos de origen\Entity\Entity2D\Shape</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Entity\Entity2D\Shape\Square\Square.cpp">
+      <Filter>Archivos de origen\Entity\Entity2D\Shape\Square</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Entity\Entity2D\Shape\Triangle\Triangle.cpp">
+      <Filter>Archivos de origen\Entity\Entity2D\Shape\Triangle</Filter>
+    </ClCompile>
+    <ClCompile Include="src\VertexArray.cpp">
+      <Filter>Archivos de origen</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Buffers\IndexBuffer.cpp">
+      <Filter>Archivos de origen\Buffers</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Buffers\VertexBufferLayout.cpp">
+      <Filter>Archivos de origen\Buffers</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Buffers\VertexBuffer.cpp">
+      <Filter>Archivos de origen\Buffers</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Buffers\VertexBufferElement.cpp">
+      <Filter>Archivos de origen\Buffers</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Input\InputManager.cpp">
+      <Filter>Archivos de origen\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Time\Time.cpp">
+      <Filter>Archivos de origen</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Sprite\Sprite.cpp">
+      <Filter>Archivos de origen\Sprite</Filter>
+    </ClCompile>
+    <ClCompile Include="src\stb_image.cpp">
+      <Filter>Archivos de origen</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Collisions\CollisionManager.cpp">
+      <Filter>Archivos de origen</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Animation\Animation.cpp">
+      <Filter>Archivos de origen</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

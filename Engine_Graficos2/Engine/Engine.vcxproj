@@ -29,26 +29,26 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -208,6 +208,7 @@ xcopy "$(ProjectDir)shaders" "$(SolutionDir)Game\shaders" /e /s /y /r /i
     <ClInclude Include="src\Buffers\VertexBuffer.h" />
     <ClInclude Include="src\Buffers\VertexBufferElement.h" />
     <ClInclude Include="src\Buffers\VertexBufferLayout.h" />
+    <ClInclude Include="src\Camera\Camera.h" />
     <ClInclude Include="src\Collisions\CollisionManager.h" />
     <ClInclude Include="src\Entity\Entity.h" />
     <ClInclude Include="src\Entity\Entity2D\Entity2D.h" />
@@ -226,6 +227,7 @@ xcopy "$(ProjectDir)shaders" "$(SolutionDir)Game\shaders" /e /s /y /r /i
     <ClInclude Include="src\Time\Time.h" />
     <ClInclude Include="src\Vector2.h" />
     <ClInclude Include="src\Vector3.h" />
+    <ClInclude Include="src\VectorUtils.h" />
     <ClInclude Include="src\VertexArray.h" />
     <ClInclude Include="src\Window\Window.h" />
   </ItemGroup>
@@ -236,6 +238,7 @@ xcopy "$(ProjectDir)shaders" "$(SolutionDir)Game\shaders" /e /s /y /r /i
     <ClCompile Include="src\Buffers\VertexBuffer.cpp" />
     <ClCompile Include="src\Buffers\VertexBufferElement.cpp" />
     <ClCompile Include="src\Buffers\VertexBufferLayout.cpp" />
+    <ClCompile Include="src\Camera\Camera.cpp" />
     <ClCompile Include="src\Collisions\CollisionManager.cpp" />
     <ClCompile Include="src\Entity\Entity.cpp" />
     <ClCompile Include="src\Entity\Entity2D\Entity2D.cpp" />

@@ -17,8 +17,8 @@ Renderer::Renderer(Window* window)
 
 	glm::vec3 cameraPos = glm::vec3(0.0f,0.0f,3.0f);
 
-	proj = glm::perspective(glm::radians(45.0f), window->GetWidth() / window->GetHeight(), 0.1f, 100.0f);
-	view = glm::lookAt(cameraPos, cameraPos + glm::vec3(0.0f, 0.0f, -1.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+	/*proj = glm::perspective(glm::radians(45.0f), window->GetWidth() / window->GetHeight(), 0.1f, 100.0f);
+	view = glm::lookAt(cameraPos, cameraPos + glm::vec3(0.0f, 0.0f, -1.0f), glm::vec3(0.0f, 1.0f, 0.0f));*/
 
 	//unsigned int shader = program->CreateShader(program->ReadFile("shaders/vertexShader.shader"), program->ReadFile("shaders/fragmentShader.shader"));
 	unsigned int shader = program->CreateShader(program->ReadFile("shaders/vertexShaderSprite.shader"), program->ReadFile("shaders/fragmentShaderSprite.shader"));
@@ -59,7 +59,7 @@ void Renderer::SwapWindowBuffers()
 	glfwSwapBuffers((GLFWwindow*)window->GetGLFWPointer());
 }
 
-void Renderer::Draw(unsigned int vertexBuffer, unsigned int indexBuffer, unsigned int modelId)
+void Renderer::Draw(unsigned int vertexBuffer, unsigned int indexBuffer, unsigned int modelId, const glm::mat4& view, const glm::mat4& proj)
 {
 	VertexBuffer* vb = vertexBuffers[vertexBuffer];
 	IndexBuffer* ib = indexBuffers[indexBuffer];

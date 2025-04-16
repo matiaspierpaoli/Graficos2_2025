@@ -38,7 +38,7 @@ Square::~Square()
 
 }
 
-void Square::Draw()
+void Square::Draw(const glm::mat4& view, const glm::mat4& proj)
 {
-	RendererSingleton::GetRenderer()->Draw(*vBuffer, *iBuffer, modelId);
+	RendererSingleton::GetRenderer()->Draw(*vBuffer, *iBuffer, modelId, view, proj);
 }

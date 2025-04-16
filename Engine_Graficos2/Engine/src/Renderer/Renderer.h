@@ -14,8 +14,8 @@ private:
 	Window* window;
 	Program* program;
 	std::vector<glm::mat4> models;
-	glm::mat4 view;
-	glm::mat4 proj;
+	//glm::mat4 view;
+	//glm::mat4 proj;
 
 	std::vector<VertexBuffer*> vertexBuffers;
 	std::vector<IndexBuffer*> indexBuffers;
@@ -28,7 +28,7 @@ public:
 
 	void ClearScreen();
 	void SwapWindowBuffers();
-	void Draw(unsigned int vertexBuffer, unsigned int indexBuffer, unsigned int modelId);
+	void Draw(unsigned int vertexBuffer, unsigned int indexBuffer, unsigned int modelId, const glm::mat4& view, const glm::mat4& proj);
 
 	unsigned int GetNewVertexBuffer(const void* data, unsigned int size);
 	void GetNewVertexBuffer(unsigned int bufferID, const void* data, unsigned int dataSize);

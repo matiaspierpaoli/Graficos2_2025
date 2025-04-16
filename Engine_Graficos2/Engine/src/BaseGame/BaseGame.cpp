@@ -70,6 +70,9 @@ void BaseGame::Loop()
         /* Render here */
         tempRenderer->ClearScreen();
 
+        GLFWwindow* tempGLFWwindow = ((GLFWwindow*)tempWindow->GetGLFWPointer());
+        ((InputManager*)inputManager)->Update(tempGLFWwindow);
+
         Update(); // Call children methods
 
         /* Swap front and back buffers */
@@ -88,4 +91,24 @@ bool BaseGame::IsRunning()
 bool BaseGame::IsKeyPressed(unsigned int keyCode)
 {
     return ((InputManager*)inputManager)->IsKeyPressed(keyCode);
+}
+
+bool BaseGame::IsKeyJustReleased(unsigned int keyCode)
+{
+    return ((InputManager*)inputManager)->IsKeyJustReleased(keyCode);
+}
+
+bool BaseGame::IsMouseButtonDown(int button)
+{
+    return ((InputManager*)inputManager)->IsMouseButtonDown(button);
+}
+
+float BaseGame::GetMouseDeltaX() const
+{
+    return ((InputManager*)inputManager)->GetMouseDeltaX();
+}
+
+float BaseGame::GetMouseDeltaY() const
+{
+    return ((InputManager*)inputManager)->GetMouseDeltaY();
 }

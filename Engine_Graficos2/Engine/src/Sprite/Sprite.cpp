@@ -219,9 +219,11 @@ void Sprite::UpdateFrame(int frameIndex)
 	ChangeSprite(uCoords);
 }
 
-void Sprite::Draw()
+void Sprite::Draw(const glm::mat4& view, const glm::mat4& proj)
 {
+	if (!visible) return;
+
 	Bind();
-	RendererSingleton::GetRenderer()->Draw(*vBuffer, *iBuffer, modelId);
+	RendererSingleton::GetRenderer()->Draw(*vBuffer, *iBuffer, modelId, view, proj);
 	Unbind();
 }

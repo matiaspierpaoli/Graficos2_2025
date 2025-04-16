@@ -3,10 +3,13 @@
 #include "Entity\Entity2D\Shape\Square\Square.h"
 #include "Entity\Entity2D\Shape\Triangle\Triangle.h"
 #include "Sprite/Sprite.h"
+#include "Camera/Camera.h"
 
 class Game : public BaseGame
 {
 private:
+
+	Camera* camera;
 
 	Entity2D* sonic;
 	Entity2D* cartel;
@@ -26,8 +29,8 @@ private:
 	Vector3 defaultTranslation;
 	float defaultRotation;
 	Vector2 defaultScale;
-	Vector3 moveVectorPlayer1;
-	Vector2 moveVectorPlayer2;
+	glm::vec3 moveVectorPlayer1;
+	glm::vec3 moveVectorPlayer2;
 	float scaleVectorPlayer1;
 	float scaleVectorPlayer2;
 
@@ -47,6 +50,12 @@ private:
 	Animation* cartelAnim;
 
 	void checkCollisions(Entity2D* player1, Entity2D* player2);
+
+	void UpdateInput();
+	void UpdatePlayer();
+	void UpdateCamera();
+	void UpdateScene();
+	void RenderScene();
 
 public:
 	Game();

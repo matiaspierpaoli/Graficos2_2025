@@ -4,6 +4,7 @@
 #include "Exports.h"
 #include "Animation/Animation.h"
 #include "Frame/Frame.h"
+#include "../libs/glm/glm.hpp"
 
 class GraficosEngine_API Sprite : public Entity2D
 {
@@ -18,6 +19,7 @@ private:
 	float vertices[4][4];
 	std::vector<Animation*>* animations;
 	unsigned int spriteQty;
+	bool visible = true;
 
 	void ChangeSprite(Coord coord);
 	void Bind(unsigned int slot = 0) const;
@@ -35,9 +37,11 @@ public:
 	inline int GetImgHeight() const { return mHeight; }
 	inline int GetWidth()const { return mWidth / spriteQty; }
 	inline int GetHeight()const { return mHeight; }
+	bool IsVisible() const { return visible; }
+	void SetVisible(bool state) { visible = state; }
 
 	void AddAnimation(Animation* _anim);
 	void UpdateFrame(int frameIndex);
 
-	void Draw();
+	void Draw(const glm::mat4& view, const glm::mat4& proj);
 };

@@ -87,6 +87,12 @@
     <Filter Include="Archivos de origen\Sprite">
       <UniqueIdentifier>{e944f017-268c-44a0-a3c7-5019d141ec18}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Archivos de encabezado\Camera">
+      <UniqueIdentifier>{19ba8e9d-baa7-4d7d-bba5-5b8994b7bb90}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Archivos de origen\Camera">
+      <UniqueIdentifier>{99debe28-bad6-4016-b5a1-c129ecf98be7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="res\fragmentShader.shader">
@@ -175,6 +181,12 @@
     <ClInclude Include="src\Vector3.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
+    <ClInclude Include="src\VectorUtils.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Camera\Camera.h">
+      <Filter>Archivos de encabezado\Camera</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Window\Window.cpp">
@@ -236,6 +248,9 @@
     </ClCompile>
     <ClCompile Include="src\Animation\Animation.cpp">
       <Filter>Archivos de origen</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Camera\Camera.cpp">
+      <Filter>Archivos de origen\Camera</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

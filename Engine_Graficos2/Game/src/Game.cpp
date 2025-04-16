@@ -1,5 +1,7 @@
 #include "Game.h"
 #include <iostream>
+#include <../libs/glfw/include/GLFW/glfw3.h>
+#include <VectorUtils.h>
 
 #pragma region keyCodes
 
@@ -167,6 +169,11 @@ void Game::Init()
 	//square2->Scale(100, 100);
 	//square2->Translate(512 - 200, 257 / 2);
 
+	camera = new Camera(CameraMode::ThirdPerson, 5.0f, 0.2f);
+	
+	bool shouldBeVisible = (camera->GetMode() == CameraMode::ThirdPerson);
+	static_cast<Sprite*>(sonic)->SetVisible(shouldBeVisible);
+
 	isMovingForward = false;
 	isMovingBackward = false;
 	isMovingLeft = false;
@@ -242,174 +249,153 @@ void Game::DeInit()
 		delete square2;
 		square2 = nullptr;
 	}
+
+	if (camera != nullptr)
+	{
+		delete camera;
+		camera = nullptr;
+	}
 }
 
 void Game::Update()
-{	
-	static_cast<Sprite*>(cartel)->UpdateFrame(0);
+{
+	system("cls");
 
-	#pragma region Input
+	UpdateInput();
+	UpdatePlayer();
+	UpdateCamera();
+	UpdateScene();
+	RenderScene();
+}
 
-	if (IsKeyPressed(KEY_W))
+void Game::UpdateInput()
+{
+	glm::vec3 rawInput = { 0, 0, 0 };
+	scaleVectorPlayer1 = 0;
+
+	if (IsKeyPressed(GLFW_KEY_W)) rawInput.y += 1;
+	if (IsKeyPressed(GLFW_KEY_S)) rawInput.y -= 1;
+	if (IsKeyPressed(GLFW_KEY_D)) rawInput.x += 1;
+	if (IsKeyPressed(GLFW_KEY_A)) rawInput.x -= 1;
+	if (IsKeyPressed(GLFW_KEY_E)) rawInput.z += 1;
+	if (IsKeyPressed(GLFW_KEY_Q)) rawInput.z -= 1;
+	if (IsKeyPressed(GLFW_KEY_Z)) scaleVectorPlayer1 += 1;
+	if (IsKeyPressed(GLFW_KEY_E)) scaleVectorPlayer1 -= 1;
+
+	moveVectorPlayer1 = (glm::length(rawInput) > 0.01f) ? glm::normalize(rawInput) : glm::vec3(0, 0, 0);
+
+	// Change camera mode
+	if (IsKeyJustReleased(GLFW_KEY_TAB))
 	{
-		moveVectorPlayer1.y = 1;
-		isMovingForward = true;
-		isMovingBackward = false;
-		isMovingLeft = false;
-		isMovingRight = false;
+		camera->ToggleMode();
+		static_cast<Sprite*>(sonic)->SetVisible(!static_cast<Sprite*>(sonic)->IsVisible());
 
-		//moveVectorPlayer1.z = -1;
-		//isMovingNear = true;
-		//isMovingFurther = false;
+		if (camera->GetMode() == CameraMode::FirstPerson)
+		{
+			camera->SetPitch(0.0f);
+
+			glm::vec3 direction;
+			direction.x = cos(glm::radians(camera->GetYaw())) * cos(glm::radians(camera->GetPitch()));
+			direction.y = sin(glm::radians(camera->GetPitch()));
+			direction.z = sin(glm::radians(camera->GetYaw())) * cos(glm::radians(camera->GetPitch()));
+			direction = glm::normalize(direction);
+
+			glm::vec3 newLookTarget = camera->GetPosition() + direction;
+			camera->SetLookTarget(newLookTarget);
+		}
+		else
+		{
+			camera->SetPitch(15.0f);
+		}
 	}
-	else if (IsKeyPressed(KEY_S))
-	{
-		moveVectorPlayer1.y = -1;
-		isMovingForward = false;
-		isMovingBackward = true;
-		isMovingLeft = false;
-		isMovingRight = false;
+}
 
-		/*moveVectorPlayer1.z = 1;
-		isMovingNear = false;
-		isMovingFurther = true;*/
-	}
-	else
-	{
-		moveVectorPlayer1.y = 0;
-		isMovingForward = false;
-		isMovingBackward = false;
-
-		/*moveVectorPlayer1.z = 0;
-		isMovingNear = false;
-		isMovingFurther = false;*/
-	}
-
-	if (IsKeyPressed(KEY_A))
-	{
-		moveVectorPlayer1.x = -1;	
-		isMovingForward = false;
-		isMovingBackward = false;
-		isMovingLeft = true;
-		isMovingRight = false;
-	}
-	else if (IsKeyPressed(KEY_D))
-	{
-		moveVectorPlayer1.x = 1;	
-		isMovingForward = false;
-		isMovingBackward = false;
-		isMovingLeft = false;
-		isMovingRight = true;
-	}
-	else
-	{
-		moveVectorPlayer1.x = 0;
-		isMovingLeft = false;
-		isMovingRight = false;
-	}
-
-	if (IsKeyPressed(KEY_Q))
-	{
-		moveVectorPlayer1.z = -1;
-		isMovingNear = true;
-		isMovingFurther = false;
-	}
-	else if (IsKeyPressed(KEY_E))
-	{
-		moveVectorPlayer1.z = 1;
-		isMovingNear = false;
-		isMovingFurther = true;
-	}
-	else
-	{
-		moveVectorPlayer1.z = 0;
-		isMovingNear = false;
-		isMovingFurther = false;
-	}
-	
-	if (IsKeyPressed(KEY_R))
-		sonic->RotateX(defaultRotation * time->GetDeltaTime());
-
-	if (IsKeyPressed(KEY_T))
-		sonic->RotateX(-defaultRotation * time->GetDeltaTime());
-
-	if (IsKeyPressed(KEY_F))
-		sonic->RotateY(defaultRotation * time->GetDeltaTime());
-
-	if (IsKeyPressed(KEY_G))
-		sonic->RotateY(-defaultRotation * time->GetDeltaTime());
-
-	if (IsKeyPressed(KEY_C))
-		sonic->RotateZ(defaultRotation * time->GetDeltaTime());
-
-	if (IsKeyPressed(KEY_V))
-		sonic->RotateZ(-defaultRotation * time->GetDeltaTime());
-
-	if (IsKeyPressed(KEY_X))
-		scaleVectorPlayer1 = 1;
-	else if (IsKeyPressed(KEY_Z))
-		scaleVectorPlayer1 = -1;
-	else
-		scaleVectorPlayer1 = 0;
-
-	#pragma endregion
-
-	if (!moveVectorPlayer1.x == 0 || !moveVectorPlayer1.y == 0 || !moveVectorPlayer1.z == 0)
+void Game::UpdatePlayer()
+{
+	if (glm::length(moveVectorPlayer1) > 0.01f)
 	{
 		static_cast<Sprite*>(sonic)->UpdateFrame(1);
 
-		traslateX = moveVectorPlayer1.x * defaultTranslation.x * time->GetDeltaTime();
-		traslateY = moveVectorPlayer1.y * defaultTranslation.y * time->GetDeltaTime();
-		traslateZ = moveVectorPlayer1.z * defaultTranslation.z * time->GetDeltaTime();
+		glm::vec3 forward = camera->GetForward(); forward.y = 0;
+		forward = glm::normalize(forward);
+		glm::vec3 right = glm::normalize(glm::cross(forward, glm::vec3(0, 1, 0)));
+		glm::vec3 up = glm::vec3(0, 1, 0);
 
-		sonic->Translate(traslateX, traslateY, traslateZ);
-		//checkCollisions(sonic, cartel);
+		glm::vec3 moveDir;
+		moveDir = moveVectorPlayer1.x * right + moveVectorPlayer1.y * forward + moveVectorPlayer1.z * up;
+
+		if (glm::length(moveDir) > 0.01f)
+			moveDir = glm::normalize(moveDir);
+
+		glm::vec3 movement = moveDir * defaultTranslation.x * time->GetDeltaTime();
+		sonic->Translate(movement.x, movement.y, movement.z);
+
+		if (camera->IsThirdPerson())
+		{
+			float targetAngle = glm::degrees(atan2(moveDir.x, moveDir.z));
+			float currentAngle = sonic->GetRotation().y;
+			float smoothSpeed = 10.0f * time->GetDeltaTime();
+			float newYRotation = glm::mix(currentAngle, targetAngle, smoothSpeed);
+			sonic->RotateY(newYRotation);
+		}
 	}
 
-	if (!scaleVectorPlayer1 == 0)
+	if (scaleVectorPlayer1 != 0)
 	{
 		scaleX = scaleVectorPlayer1 * defaultScale.x * time->GetDeltaTime();
 		scaleY = scaleVectorPlayer1 * defaultScale.y * time->GetDeltaTime();
-
 		sonic->Scale(scaleX, scaleY);
-		//checkCollisions(sonic, cartel);
 	}
-
-	if (!isMovingForward && !isMovingBackward && !isMovingLeft && !isMovingRight)
-	{
-		static_cast<Sprite*>(sonic)->UpdateFrame(0);
-	}
-
-	static_cast<Sprite*>(frontWall)->Draw();
-	static_cast<Sprite*>(sideWall1)->Draw();
-	static_cast<Sprite*>(sideWall2)->Draw();
-	static_cast<Sprite*>(floor)->Draw();
-	//static_cast<Sprite*>(cartel)->Draw();
-	static_cast<Sprite*>(sonic)->Draw();
-
-	/*static_cast<Square*>(square1)->Draw();
-	static_cast<Square*>(square2)->Draw();*/
 }
 
-void Game::checkCollisions(Entity2D* player1, Entity2D* player2)
+
+void Game::UpdateCamera()
 {
-	/*while (collisionManager->checkEntityToEntityCollision(player1, player2))
-	{
-		if (!moveVectorPlayer1.x == 0 || !moveVectorPlayer1.y == 0 ||
-			!moveVectorPlayer2.x == 0 || !moveVectorPlayer2.y == 0)
-			player1->Translate(-traslateX, -traslateY);
+	bool rightHeld = IsMouseButtonDown(GLFW_MOUSE_BUTTON_RIGHT);
+	bool altHeld = IsKeyPressed(GLFW_KEY_LEFT_ALT);
+	bool leftHeld = IsMouseButtonDown(GLFW_MOUSE_BUTTON_LEFT);
 
-		if (!scaleVectorPlayer1 == 0 || !scaleVectorPlayer2 == 0)
-			player1->Scale(-scaleX, -scaleY);
+	if (camera->IsThirdPerson())
+	{
+		if (altHeld && leftHeld)
+		{
+			float deltaX = GetMouseDeltaX();
+			float deltaY = GetMouseDeltaY();
+			camera->FollowTarget(sonic->GetTranslation(), deltaX, deltaY, true);
+		}
+		else
+		{
+			camera->FollowTarget(sonic->GetTranslation(), 0, 0, false);
+		}
 	}
-
-	while (collisionManager->checkEntityToWindowCollision(player1, (Window*)window))
+	else
 	{
-		if (!moveVectorPlayer1.x == 0 || !moveVectorPlayer1.y == 0 ||
-			!moveVectorPlayer2.x == 0 || !moveVectorPlayer2.y == 0)
-			player1->Translate(-traslateX, -traslateY);
-		
-		if (!scaleVectorPlayer1 == 0 || !scaleVectorPlayer2 == 0)
-			player1->Scale(-scaleX, -scaleY);
-	}*/
+		if (rightHeld)
+			camera->UpdateFirstPersonView(GetMouseDeltaX(), GetMouseDeltaY());
+
+		camera->SetLookTarget(camera->GetPosition() + camera->CalculateDirection());
+
+		glm::vec3 sonicPos = ToGLM(sonic->GetTranslation());
+		camera->SetPosition(sonicPos + glm::vec3(0, 1.5f, 0)); 
+
+		camera->SetPitch(glm::clamp(camera->GetPitch(), -89.0f, 89.0f));
+	}
+}
+
+void Game::UpdateScene()
+{
+	static_cast<Sprite*>(cartel)->UpdateFrame(0);
+}
+
+void Game::RenderScene()
+{
+	glm::mat4 view = camera->GetViewMatrix();
+
+	Window* myWindow = static_cast<Window*>(window);
+
+	static_cast<Sprite*>(frontWall)->Draw(camera->GetViewMatrix(), camera->GetProjectionMatrix(myWindow));
+	static_cast<Sprite*>(sideWall1)->Draw(camera->GetViewMatrix(), camera->GetProjectionMatrix(myWindow));
+	static_cast<Sprite*>(sideWall2)->Draw(camera->GetViewMatrix(), camera->GetProjectionMatrix(myWindow));
+	static_cast<Sprite*>(floor)->Draw(camera->GetViewMatrix(), camera->GetProjectionMatrix(myWindow));
+	static_cast<Sprite*>(sonic)->Draw(camera->GetViewMatrix(), camera->GetProjectionMatrix(myWindow));
 }

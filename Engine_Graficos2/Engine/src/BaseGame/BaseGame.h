@@ -27,4 +27,8 @@ public:
 	virtual void DeInit() = 0;
 	bool IsRunning();
 	bool IsKeyPressed(unsigned int keyCode);
+	bool IsKeyJustReleased(unsigned int keyCode);
+	bool IsMouseButtonDown(int button);
+	float GetMouseDeltaX() const;
+	float GetMouseDeltaY() const;
 };

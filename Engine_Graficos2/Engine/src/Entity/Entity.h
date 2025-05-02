@@ -5,7 +5,7 @@
 
 class GraficosEngine_API Entity
 {
-private:
+protected:
 	Vector3 translation;
 	Vector3 rotation;
 	Vector2 scale;

@@ -93,6 +93,24 @@
     <Filter Include="Archivos de origen\Camera">
       <UniqueIdentifier>{99debe28-bad6-4016-b5a1-c129ecf98be7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Archivos de encabezado\Mesh">
+      <UniqueIdentifier>{567ed3e0-8371-4905-b149-94b374af5e5f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Archivos de origen\Mesh">
+      <UniqueIdentifier>{8d3a328e-ca7a-439f-9480-73a17428c356}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Archivos de encabezado\Entity\Entity3D">
+      <UniqueIdentifier>{0fb5378f-90c9-409f-ba18-a3c27d4ec15e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Archivos de origen\Entity\Entity3D">
+      <UniqueIdentifier>{567c9dde-818a-4a93-b39e-1db423b3a284}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Archivos de encabezado\Mesh\Cube">
+      <UniqueIdentifier>{54dbb161-a93f-445c-b96d-80a1c7eef003}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Archivos de origen\Mesh\CubeMesh">
+      <UniqueIdentifier>{b7565a10-32e4-4a5b-8ec6-709118f1522d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="res\fragmentShader.shader">
@@ -187,6 +205,15 @@
     <ClInclude Include="src\Camera\Camera.h">
       <Filter>Archivos de encabezado\Camera</Filter>
     </ClInclude>
+    <ClInclude Include="src\Mesh\Mesh.h">
+      <Filter>Archivos de encabezado\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Entity\Entity3D\Entity3D.h">
+      <Filter>Archivos de encabezado\Entity\Entity3D</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Mesh\CubeMesh\CubeMesh.h">
+      <Filter>Archivos de encabezado\Mesh\Cube</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Window\Window.cpp">
@@ -251,6 +278,15 @@
     </ClCompile>
     <ClCompile Include="src\Camera\Camera.cpp">
       <Filter>Archivos de origen\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Mesh\Mesh.cpp">
+      <Filter>Archivos de origen\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Entity\Entity3D\Entity3D.cpp">
+      <Filter>Archivos de origen\Entity\Entity3D</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Mesh\CubeMesh\CubeMesh.cpp">
+      <Filter>Archivos de origen\Mesh\CubeMesh</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

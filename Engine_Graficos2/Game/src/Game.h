@@ -2,6 +2,8 @@
 #include "BaseGame/BaseGame.h"
 #include "Entity\Entity2D\Shape\Square\Square.h"
 #include "Entity\Entity2D\Shape\Triangle\Triangle.h"
+#include "Entity/Entity3D/Entity3D.h"
+#include "Mesh/CubeMesh/CubeMesh.h"
 #include "Sprite/Sprite.h"
 #include "Camera/Camera.h"
 
@@ -20,6 +22,10 @@ private:
 
 	Entity2D* square1;
 	Entity2D* square2;
+
+	Entity3D* cube;
+	Mesh* cubeMesh;
+	Sprite* sonicFaces[6];
 
 	float traslateX;
 	float traslateY;

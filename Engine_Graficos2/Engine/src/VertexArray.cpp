@@ -49,7 +49,7 @@ void VertexArray::SetBuffer(unsigned int bufferID)
 {
 	Bind();
 
-	vertexBuffers[0]->Bind(); //HERE BREAKS
+	vertexBuffers[0]->Bind();
 
 	unsigned int offset = 0;
 	VertexBufferLayout layout = layouts[0];

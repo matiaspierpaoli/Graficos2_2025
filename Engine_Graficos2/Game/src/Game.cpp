@@ -145,6 +145,41 @@ void Game::Init()
 	sideWall2->RotateY(-90);
 	sideWall2->Scale(2, 1.8);
 
+	for (int i = 0; i < 6; i++) 
+	{
+		sonicFaces[i] = new Sprite("res/Sonic_Mania_Sprite_Sheet.png", 12, sonicIdleFrames.at(0));
+		sonicFaces[i]->AddAnimation(sonicIdleAnim);
+		sonicFaces[i]->AddAnimation(sonicRunAnim);
+	}
+
+	float halfSize = 0.5f;
+
+	// Front face
+	sonicFaces[0]->Translate(0, 0, halfSize);
+	// Back face
+	sonicFaces[1]->Translate(0, 0, -halfSize);
+	sonicFaces[1]->RotateY(180);
+
+	// Right face
+	sonicFaces[2]->Translate(halfSize, 0, 0);
+	sonicFaces[2]->RotateY(-90);
+
+	// Left face
+	sonicFaces[3]->Translate(-halfSize, 0, 0);
+	sonicFaces[3]->RotateY(90);
+
+	// Up face
+	sonicFaces[4]->Translate(0, halfSize, 0);
+	sonicFaces[4]->RotateX(-90);
+
+	// Down face
+	sonicFaces[5]->Translate(0, -halfSize, 0);
+	sonicFaces[5]->RotateX(90);
+
+	cubeMesh = new CubeMesh(sonicFaces);
+	cube = new Entity3D();
+	cube->SetMesh(cubeMesh);
+
 	//float vertexCol1[4][4] =
 	//{
 	//	 0.0f,  1.0f, 0.0f, 1.0f,
@@ -250,6 +285,18 @@ void Game::DeInit()
 		square2 = nullptr;
 	}
 
+	if (cube != nullptr)
+	{
+		delete cube;
+		cube = nullptr;
+	}
+	
+	if (cubeMesh != nullptr)
+	{
+		delete cubeMesh;
+		cubeMesh = nullptr;
+	}
+	
 	if (camera != nullptr)
 	{
 		delete camera;
@@ -314,39 +361,41 @@ void Game::UpdatePlayer()
 {
 	if (glm::length(moveVectorPlayer1) > 0.01f)
 	{
-		static_cast<Sprite*>(sonic)->UpdateFrame(1);
+		for (int i = 0; i < 6; i++)
+			sonicFaces[i]->UpdateFrame(1);
 
 		glm::vec3 forward = camera->GetForward(); forward.y = 0;
 		forward = glm::normalize(forward);
 		glm::vec3 right = glm::normalize(glm::cross(forward, glm::vec3(0, 1, 0)));
 		glm::vec3 up = glm::vec3(0, 1, 0);
 
-		glm::vec3 moveDir;
-		moveDir = moveVectorPlayer1.x * right + moveVectorPlayer1.y * forward + moveVectorPlayer1.z * up;
+		glm::vec3 moveDir = moveVectorPlayer1.x * right + moveVectorPlayer1.y * forward + moveVectorPlayer1.z * up;
 
 		if (glm::length(moveDir) > 0.01f)
 			moveDir = glm::normalize(moveDir);
 
 		glm::vec3 movement = moveDir * defaultTranslation.x * time->GetDeltaTime();
-		sonic->Translate(movement.x, movement.y, movement.z);
+		cube->Translate(movement.x, movement.y, movement.z);
 
 		if (camera->IsThirdPerson())
 		{
 			float targetAngle = glm::degrees(atan2(moveDir.x, moveDir.z));
-			float currentAngle = sonic->GetRotation().y;
+			float currentAngle = cube->GetRotation().y;
 			float smoothSpeed = 10.0f * time->GetDeltaTime();
 			float newYRotation = glm::mix(currentAngle, targetAngle, smoothSpeed);
-			sonic->RotateY(newYRotation);
+			cube->RotateY(newYRotation);
 		}
+		cube->UpdateModel(true);
 	}
 
 	if (scaleVectorPlayer1 != 0)
 	{
-		scaleX = scaleVectorPlayer1 * defaultScale.x * time->GetDeltaTime();
-		scaleY = scaleVectorPlayer1 * defaultScale.y * time->GetDeltaTime();
-		sonic->Scale(scaleX, scaleY);
+		float scaleX = scaleVectorPlayer1 * defaultScale.x * time->GetDeltaTime();
+		float scaleY = scaleVectorPlayer1 * defaultScale.y * time->GetDeltaTime();
+		cube->Scale(scaleX, scaleY);
 	}
 }
+
 
 
 void Game::UpdateCamera()
@@ -393,9 +442,17 @@ void Game::RenderScene()
 
 	Window* myWindow = static_cast<Window*>(window);
 
+	for (int i = 0; i < 6; i++) 
+	{
+		sonicFaces[i]->Draw(view, camera->GetProjectionMatrix(myWindow));
+	}
+
+	CubeMesh* cubeMesh = static_cast<CubeMesh*>(cube->GetMesh());
+	cubeMesh->Render();
+
 	static_cast<Sprite*>(frontWall)->Draw(camera->GetViewMatrix(), camera->GetProjectionMatrix(myWindow));
 	static_cast<Sprite*>(sideWall1)->Draw(camera->GetViewMatrix(), camera->GetProjectionMatrix(myWindow));
 	static_cast<Sprite*>(sideWall2)->Draw(camera->GetViewMatrix(), camera->GetProjectionMatrix(myWindow));
 	static_cast<Sprite*>(floor)->Draw(camera->GetViewMatrix(), camera->GetProjectionMatrix(myWindow));
-	static_cast<Sprite*>(sonic)->Draw(camera->GetViewMatrix(), camera->GetProjectionMatrix(myWindow));
+	//static_cast<Sprite*>(sonic)->Draw(camera->GetViewMatrix(), camera->GetProjectionMatrix(myWindow));
 }

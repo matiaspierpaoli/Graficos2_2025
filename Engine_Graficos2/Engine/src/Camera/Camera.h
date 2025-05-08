@@ -4,7 +4,6 @@
 #include "../libs/glm/gtc/matrix_transform.hpp"
 #include "../Window/Window.h"
 #include "Vector3.h"
-#include "../Entity/Entity.h"
 
 enum class  CameraMode {
     FirstPerson,

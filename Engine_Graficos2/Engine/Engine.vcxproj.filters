@@ -113,10 +113,16 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <None Include="res\fragmentShader.shader">
+    <None Include="shaders\fragmentShader.shader">
       <Filter>res\shaders</Filter>
     </None>
-    <None Include="res\vertexShader.shader">
+    <None Include="shaders\fragmentShaderSprite.shader">
+      <Filter>res\shaders</Filter>
+    </None>
+    <None Include="shaders\vertexShader.shader">
+      <Filter>res\shaders</Filter>
+    </None>
+    <None Include="shaders\vertexShaderSprite.shader">
       <Filter>res\shaders</Filter>
     </None>
   </ItemGroup>

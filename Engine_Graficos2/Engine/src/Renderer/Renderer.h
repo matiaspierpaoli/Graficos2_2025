@@ -29,10 +29,15 @@ public:
 	void ClearScreen();
 	void SwapWindowBuffers();
 	void Draw(unsigned int vertexBuffer, unsigned int indexBuffer, unsigned int modelId, const glm::mat4& view, const glm::mat4& proj);
+	void DrawRange(unsigned int vertexBuffer, unsigned int indexBuffer, unsigned int modelId, const glm::mat4& view, const glm::mat4& proj, unsigned int indexOffset, unsigned int indexCount);
 
-	unsigned int GetNewVertexBuffer(const void* data, unsigned int size);
+	glm::mat4 GetModel(unsigned int modelId) const;
+	void DeleteModel(unsigned int modelId);
+
+	unsigned int GetNewVertexBuffer(const void* data, unsigned int size, bool is3D = false);
 	void GetNewVertexBuffer(unsigned int bufferID, const void* data, unsigned int dataSize);
 	unsigned int GetNewIndexBuffer(unsigned int* indices, unsigned int count);
+	Window* GetWindow();
 
 	unsigned int GetNewModelId(glm::mat4 model);
 	void SetModel(glm::mat4 model, unsigned int modelId);

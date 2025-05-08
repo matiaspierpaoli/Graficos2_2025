@@ -24,8 +24,7 @@ private:
 	Entity2D* square2;
 
 	Entity3D* cube;
-	Mesh* cubeMesh;
-	Sprite* sonicFaces[6];
+	Sprite* cubeFaces[6];
 
 	float traslateX;
 	float traslateY;
@@ -36,6 +35,7 @@ private:
 	float defaultRotation;
 	Vector2 defaultScale;
 	glm::vec3 moveVectorPlayer1;
+	glm::vec3 rotationVectorPlayer1;
 	glm::vec3 moveVectorPlayer2;
 	float scaleVectorPlayer1;
 	float scaleVectorPlayer2;

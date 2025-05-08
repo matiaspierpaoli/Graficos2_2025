@@ -6,18 +6,15 @@
 #include "../libs/glm/gtc/quaternion.hpp"
 #include "../libs/glfw/include/GLFW/glfw3.h"
 
-class GraficosEngine_API CubeMesh : public Mesh {
-private:
-    Sprite* sprites[6];    
-    glm::vec3 cubeFacePositions[6];   
-    glm::quat cubeFaceRotations[6];   
-
-    GLuint VAO, VBO, EBO;
-
+class GraficosEngine_API CubeMesh : public Mesh
+{
 public:
-    CubeMesh(Sprite* sprites[6]);
+    CubeMesh(Sprite* faces[6]);
     ~CubeMesh();
 
-    void generateBuffers();
-    void Render();
+    void Render(Camera* camera) override;
+
+private:
+    void SetupMesh();
+    Sprite* faces[6]; // Referencias a los sprites (para texturas)
 };

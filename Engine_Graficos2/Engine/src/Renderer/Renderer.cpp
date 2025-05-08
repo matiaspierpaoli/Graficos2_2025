@@ -29,6 +29,7 @@ Renderer::Renderer(Window* window)
 
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_ALPHA_TEST);
+	glDepthFunc(GL_LESS);
 
 	SetUniversalSpriteSettings();
 }
@@ -79,7 +80,50 @@ void Renderer::Draw(unsigned int vertexBuffer, unsigned int indexBuffer, unsigne
 	glDrawElements(GL_TRIANGLES, ib->GetCount(), GL_UNSIGNED_INT, nullptr);
 }
 
-unsigned int Renderer::GetNewVertexBuffer(const void* data, unsigned int size)
+void Renderer::DrawRange(
+	unsigned int vertexBuffer,
+	unsigned int indexBuffer,
+	unsigned int modelId,
+	const glm::mat4& view,
+	const glm::mat4& proj,
+	unsigned int indexOffset,
+	unsigned int indexCount)
+{
+	VertexBuffer* vb = vertexBuffers[vertexBuffer];
+	IndexBuffer* ib = indexBuffers[indexBuffer];
+	VertexArray* va = vertexArrays[vertexBuffer];
+
+	vb->Bind();
+	va->Bind();
+	ib->Bind();
+
+	program->SetUniformMat4F("mvp", proj * view * models[modelId]);
+
+	// Dibujar solo un rango de índices
+	glDrawElements(
+		GL_TRIANGLES,
+		indexCount,
+		GL_UNSIGNED_INT,
+		(void*)(indexOffset * sizeof(unsigned int))
+	);
+}
+
+glm::mat4 Renderer::GetModel(unsigned int modelId) const
+{
+	if (modelId < models.size()) {
+		return models[modelId];
+	}
+	return glm::mat4(1.0f); // Retorna matriz identidad si el ID no es válido
+}
+
+void Renderer::DeleteModel(unsigned int modelId)
+{
+	if (modelId < models.size()) {
+		models[modelId] = glm::mat4(1.0f); // Reset a matriz identidad
+	}
+}
+
+unsigned int Renderer::GetNewVertexBuffer(const void* data, unsigned int size, bool is3D)
 {
 	unsigned int bufferID = vertexArrays.size();
 
@@ -87,10 +131,10 @@ unsigned int Renderer::GetNewVertexBuffer(const void* data, unsigned int size)
 	vertexBuffers.push_back(vb);
 
 	VertexBufferLayout layout;
-	layout.Push<float>(2); // Position
-	//layout.Push<float>(4); // Color
+	if (is3D) layout.Push<float>(3); // Position 3D
+	else  layout.Push<float>(2); // Position 2D
+	
 	layout.Push<float>(2); // UV 
-	//layout.Push<float>(4); //Color
 
 	VertexArray* va = new VertexArray();
 	va->AddBuffer(vb, layout);
@@ -118,6 +162,11 @@ unsigned int Renderer::GetNewIndexBuffer(unsigned int* indices, unsigned int ind
 	indexBuffers.push_back(ib);
 
 	return bufferID;
+}
+
+Window* Renderer::GetWindow()
+{
+	return window;
 }
 
 unsigned int Renderer::GetNewModelId(glm::mat4 model)

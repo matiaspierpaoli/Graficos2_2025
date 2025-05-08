@@ -22,8 +22,6 @@ private:
 	bool visible = true;
 
 	void ChangeSprite(Coord coord);
-	void Bind(unsigned int slot = 0) const;
-	void Unbind();
 
 public:
 	Sprite(const std::string& path);
@@ -31,6 +29,8 @@ public:
 	Sprite(const std::string& path, int spriteQuantity, Frame firstFrame);
 	~Sprite();
 
+	void Bind(unsigned int slot = 0) const;
+	void Unbind();
 	unsigned int GetImageID();
 	inline int GetSpriteQty() const { return spriteQty; }
 	inline int GetImgWidth() const { return mWidth; }

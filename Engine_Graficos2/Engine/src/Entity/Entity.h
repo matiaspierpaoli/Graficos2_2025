@@ -2,13 +2,17 @@
 #include "Vector2.h"
 #include "Vector3.h"
 #include "Exports.h"
+#include <../libs/glm/glm.hpp>
+
+struct TransformMatrix;
 
 class GraficosEngine_API Entity
 {
 protected:
 	Vector3 translation;
 	Vector3 rotation;
-	Vector2 scale;
+	Vector3 scale;
+	unsigned int modelId;
 
 public:
 	Entity();
@@ -16,18 +20,19 @@ public:
 
 	unsigned int* vBuffer;
 	unsigned int* iBuffer;
-	unsigned int modelId;
 
 	void Translate(float x, float y, float z);
 	void RotateX(float angle);
 	void RotateY(float angle);
 	void RotateZ(float angle);
-	void Scale(float x, float y);
+	void Scale(float x, float y, float z);
 
 	Vector3 GetTranslation();
 	Vector3 GetRotation();
-	Vector2 GetScale();
+	Vector3 GetScale();
+	unsigned int GetModelId();
 
-	void UpdateModel(bool isModelCreated);
+	virtual void UpdateModel(bool isModelCreated);
+	glm::mat4 GetTransformMatrix() const;
 };
 

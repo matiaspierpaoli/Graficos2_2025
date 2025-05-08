@@ -1,79 +1,126 @@
 #include "CubeMesh.h"
+#include "Camera/Camera.h"
+#include "../src/Window/Window.h"
+#include "RendererSingleton.h"
+#include <glm/gtc/type_ptr.hpp>
 
-CubeMesh::CubeMesh(Sprite* sprites[6]) {
+
+CubeMesh::CubeMesh(Sprite* faces[6])
+{
     for (int i = 0; i < 6; ++i) {
-        this->sprites[i] = sprites[i];
+        this->faces[i] = faces[i];
     }
 
-    // Define cube faces
-    cubeFacePositions[0] = glm::vec3(0.0f, 0.0f, 0.5f);  // Front
-    cubeFacePositions[1] = glm::vec3(0.0f, 0.0f, -0.5f); // Back
-    cubeFacePositions[2] = glm::vec3(-0.5f, 0.0f, 0.0f); // Left
-    cubeFacePositions[3] = glm::vec3(0.5f, 0.0f, 0.0f);  // Right
-    cubeFacePositions[4] = glm::vec3(0.0f, 0.5f, 0.0f);  // Above
-    cubeFacePositions[5] = glm::vec3(0.0f, -0.5f, 0.0f); // Below
-
-    // Define rotations
-    cubeFaceRotations[0] = glm::quat();
-    cubeFaceRotations[1] = glm::quat(glm::radians(glm::vec3(180.0f, 0.0f, 0.0f)));
-    cubeFaceRotations[2] = glm::quat(glm::radians(glm::vec3(0.0f, 90.0f, 0.0f)));
-    cubeFaceRotations[3] = glm::quat(glm::radians(glm::vec3(0.0f, -90.0f, 0.0f)));
-    cubeFaceRotations[4] = glm::quat(glm::radians(glm::vec3(-90.0f, 0.0f, 0.0f)));
-    cubeFaceRotations[5] = glm::quat(glm::radians(glm::vec3(90.0f, 0.0f, 0.0f)));
-
-    generateBuffers();
+    SetupMesh();
 }
 
-CubeMesh::~CubeMesh() {
-    glDeleteVertexArrays(1, &VAO);
-    glDeleteBuffers(1, &VBO);
-    glDeleteBuffers(1, &EBO);
+CubeMesh::~CubeMesh()
+{
+    // No eliminamos los sprites, solo los usamos como referencia
 }
 
-void CubeMesh::generateBuffers() {
-    // Cube vertices (each face is a square)
-    GLfloat vertices[] = {
-        // Position         // Texture Coord
-        -0.5f, -0.5f,  0.0f,  0.0f, 0.0f, // Left down
-         0.5f, -0.5f,  0.0f,  1.0f, 0.0f, // Right down
-         0.5f,  0.5f,  0.0f,  1.0f, 1.0f, // Up right
-        -0.5f,  0.5f,  0.0f,  0.0f, 1.0f  // Up left
+void CubeMesh::SetupMesh()
+{
+    // Definición de vértices (posición + coordenadas de textura)
+    float vertices[] = {
+        // Cara frontal (Z+) - Textura 0
+        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+         0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+         0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+        -0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
+
+        // Cara posterior (Z-) - Textura 1
+        -0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
+         0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+         0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+        -0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+
+        // Cara derecha (X+) - Textura 2
+         0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+         0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
+         0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+         0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
+
+         // Cara izquierda (X-) - Textura 3
+         -0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+         -0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+         -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+         -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+
+         // Cara superior (Y+) - Textura 4
+         -0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
+          0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+          0.5f,  0.5f, -0.5f,  1.0f, 0.0f,
+         -0.5f,  0.5f, -0.5f,  0.0f, 0.0f,
+
+         // Cara inferior (Y-) - Textura 5
+         -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+         -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+          0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
+          0.5f, -0.5f,  0.5f,  1.0f, 0.0f
     };
 
-    // Indices for a square (2 triangles in a face)
-    GLuint indices[] = {
-        0, 1, 2, // First triangle
-        0, 2, 3  // Second triangle
+    // Índices para renderizar el cubo (2 triángulos por cara)
+    unsigned int indices[] = {
+        // Cara frontal
+        0, 1, 2,
+        2, 3, 0,
+
+        // Cara posterior
+        4, 5, 6,
+        6, 7, 4,
+
+        // Cara derecha
+        8, 9, 10,
+        10, 11, 8,
+
+        // Cara izquierda
+        12, 13, 14,
+        14, 15, 12,
+
+        // Cara superior
+        16, 17, 18,
+        18, 19, 16,
+
+        // Cara inferior
+        20, 21, 22,
+        22, 23, 20
     };
 
-    glGenVertexArrays(1, &VAO);
-    glBindVertexArray(VAO);
+    /*glEnable(GL_CULL_FACE);
+    glCullFace(GL_BACK);
+    glFrontFace(GL_CCW);*/
 
-    glGenBuffers(1, &VBO);
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-    glGenBuffers(1, &EBO);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid*)0);
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
-    glEnableVertexAttribArray(1);
-
-    glBindVertexArray(0); 
+    *vBuffer = RendererSingleton::GetRenderer()->GetNewVertexBuffer(vertices, sizeof(vertices), true);
+    *iBuffer = RendererSingleton::GetRenderer()->GetNewIndexBuffer(indices, 36);
 }
 
-void CubeMesh::Render() {
+void CubeMesh::Render(Camera* camera)
+{
+    // Obtener matrices de vista y proyección
+    Window* window = RendererSingleton::GetRenderer()->GetWindow();
+    glm::mat4 view = camera->GetViewMatrix();
+    glm::mat4 proj = camera->GetProjectionMatrix(window);
 
-    for (int i = 0; i < 6; ++i) {
-        glm::mat4 model = glm::mat4(1.0f);
-        model = glm::translate(model, cubeFacePositions[i]);
-        model = model * glm::mat4_cast(cubeFaceRotations[i]);
+    //RendererSingleton::GetRenderer()->SetSprite(0);
 
-        glBindVertexArray(VAO);
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-        glBindVertexArray(0);
+    // Renderizar cada cara con su textura correspondiente
+    for (unsigned int i = 0; i < 6; i++) {
+        // Activar la textura del sprite correspondiente
+        faces[i]->Bind(0);
+
+        // Dibujar los triángulos de esta cara
+        // Nota: Esto requiere que tu Renderer soporte dibujar por rangos de índices
+        RendererSingleton::GetRenderer()->DrawRange(
+            *vBuffer,
+            *iBuffer,
+            modelId,
+            view,
+            proj,
+            i * 6, // offset inicial
+            6      // count de índices
+        );
+
+        faces[i]->Unbind();
     }
 }

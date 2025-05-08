@@ -2,23 +2,24 @@
 #include "Exports.h"
 #include <../libs/glm/glm.hpp>
 #include <vector>
+#include "Camera/Camera.h"
+
 
 class GraficosEngine_API Mesh {
 protected:
-    unsigned int VAO, VBO, EBO;
-    unsigned int vertexCount;
-    unsigned int shaderID;
-
-    glm::mat4 modelMatrix = glm::mat4(1.0f);
+    unsigned int* vBuffer;
+    unsigned int* iBuffer;
+    unsigned int modelId;
 
 public:
     Mesh();
     virtual ~Mesh();
 
-    virtual void Draw(const glm::mat4& view, const glm::mat4& proj);
+    unsigned int GetVertexBuffer() const { return *vBuffer; }
+    unsigned int GetIndexBuffer() const { return *iBuffer; }
+    unsigned int GetModelId() const { return modelId; }
 
-    void SetModelMatrix(const glm::mat4& model);
-    glm::mat4 GetModelMatrix() const;
+    void SetModelId(unsigned int id) { modelId = id; }
 
-    void SetShader(unsigned int shader);
+    virtual void Render(class Camera* camera) = 0;
 };

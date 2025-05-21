@@ -223,6 +223,8 @@ void Sprite::Draw(const glm::mat4& view, const glm::mat4& proj)
 {
 	if (!visible) return;
 
+	RendererSingleton::GetRenderer()->SetSpriteShaderActive();
+
 	Bind();
 	RendererSingleton::GetRenderer()->Draw(*vBuffer, *iBuffer, modelId, view, proj);
 	Unbind();

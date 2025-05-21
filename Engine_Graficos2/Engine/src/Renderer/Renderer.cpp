@@ -13,7 +13,8 @@ Renderer::Renderer(Window* window)
 {
 	this->window = window;
 
-	program = new Program();
+	lightingProgram = new Program();
+	spriteProgram = new Program();
 
 	glm::vec3 cameraPos = glm::vec3(0.0f,0.0f,3.0f);
 
@@ -21,8 +22,18 @@ Renderer::Renderer(Window* window)
 	view = glm::lookAt(cameraPos, cameraPos + glm::vec3(0.0f, 0.0f, -1.0f), glm::vec3(0.0f, 1.0f, 0.0f));*/
 
 	//unsigned int shader = program->CreateShader(program->ReadFile("shaders/vertexShader.shader"), program->ReadFile("shaders/fragmentShader.shader"));
-	unsigned int shader = program->CreateShader(program->ReadFile("shaders/vertexShaderSprite.shader"), program->ReadFile("shaders/fragmentShaderSprite.shader"));
-	glUseProgram(shader);
+	lightingShaderId = lightingProgram->CreateShader(
+		lightingProgram->ReadFile("shaders/vertexLighting.shader"),
+		lightingProgram->ReadFile("shaders/fragmentLighting.shader")
+	);
+
+	spriteShaderId = spriteProgram->CreateShader(
+		spriteProgram->ReadFile("shaders/vertexShaderSprite.shader"),
+		spriteProgram->ReadFile("shaders/fragmentShaderSprite.shader")
+	);
+
+	// Usar por default el de sprite para UI
+	glUseProgram(spriteShaderId);
 
 	//glGenVertexArrays(1, &vao);
 	//glBindVertexArray(vao);
@@ -30,6 +41,7 @@ Renderer::Renderer(Window* window)
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_ALPHA_TEST);
 	glDepthFunc(GL_LESS);
+	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
 	SetUniversalSpriteSettings();
 }
@@ -37,7 +49,8 @@ Renderer::Renderer(Window* window)
 Renderer::~Renderer()
 {
 	delete window;
-	delete program;
+	delete lightingProgram;
+	delete spriteProgram;
 
 	for (int i = 0; i < vertexArrays.size(); i++)
 		delete vertexArrays[i];
@@ -70,7 +83,7 @@ void Renderer::Draw(unsigned int vertexBuffer, unsigned int indexBuffer, unsigne
 	va->Bind();
 	ib->Bind();
 
-	program->SetUniformMat4F("mvp", proj * view * models[modelId]);
+	spriteProgram->SetUniformMat4F("mvp", proj * view * models[modelId]);
 	//program->SetUniform4f("uColor", 1.0f, 0.0f, 0.0f, 1.0f);
 	//glDrawArrays(GL_TRIANGLES, 0, 3);
 
@@ -97,7 +110,7 @@ void Renderer::DrawRange(
 	va->Bind();
 	ib->Bind();
 
-	program->SetUniformMat4F("mvp", proj * view * models[modelId]);
+	spriteProgram->SetUniformMat4F("mvp", proj * view * models[modelId]);
 
 	// Dibujar solo un rango de índices
 	glDrawElements(
@@ -107,6 +120,41 @@ void Renderer::DrawRange(
 		(void*)(indexOffset * sizeof(unsigned int))
 	);
 }
+
+void Renderer::DrawWithLighting(unsigned int vertexBuffer, unsigned int indexBuffer, unsigned int modelId,
+	const glm::mat4& view, const glm::mat4& proj,
+	const glm::vec3& lightDir, const glm::vec3& lightColor, const glm::vec3& objectColor)
+{
+	VertexBuffer* vb = vertexBuffers[vertexBuffer];
+	IndexBuffer* ib = indexBuffers[indexBuffer];
+	VertexArray* va = vertexArrays[vertexBuffer];
+
+	vb->Bind();
+	va->Bind();
+	ib->Bind();
+
+	glm::mat4 model = models[modelId];
+	lightingProgram->SetUniformMat4F("model", model);
+	lightingProgram->SetUniformMat4F("view", view);
+	lightingProgram->SetUniformMat4F("projection", proj);
+
+	lightingProgram->SetUniform3f("lightDir", lightDir.x, lightDir.y, lightDir.z);
+	lightingProgram->SetUniform3f("lightColor", lightColor.x, lightColor.y, lightColor.z);
+	lightingProgram->SetUniform3f("objectColor", objectColor.x, objectColor.y, objectColor.z);
+
+	glDrawElements(GL_TRIANGLES, ib->GetCount(), GL_UNSIGNED_INT, nullptr);
+}
+
+void Renderer::SetSpriteShaderActive()
+{
+	glUseProgram(spriteShaderId);
+}
+
+void Renderer::SetLightingShaderActive()
+{
+	glUseProgram(lightingShaderId);
+}
+
 
 glm::mat4 Renderer::GetModel(unsigned int modelId) const
 {
@@ -131,10 +179,16 @@ unsigned int Renderer::GetNewVertexBuffer(const void* data, unsigned int size, b
 	vertexBuffers.push_back(vb);
 
 	VertexBufferLayout layout;
-	if (is3D) layout.Push<float>(3); // Position 3D
-	else  layout.Push<float>(2); // Position 2D
-	
-	layout.Push<float>(2); // UV 
+	if (is3D)
+	{
+		layout.Push<float>(3); // Position 3D
+		layout.Push<float>(3); // normal
+	}
+	else
+	{
+		layout.Push<float>(2); // Position 2D
+		layout.Push<float>(2); // UV 
+	}
 
 	VertexArray* va = new VertexArray();
 	va->AddBuffer(vb, layout);
@@ -208,7 +262,7 @@ void Renderer::GetNewSprite(std::string imgPath, int* imgWidth, int* imgHeight, 
 
 void Renderer::SetSprite(unsigned int value)
 {
-	program->SetUniform1i("u_Sprite", value);
+	spriteProgram->SetUniform1i("u_Sprite", value);
 }
 
 void Renderer::DeleteSprite(unsigned int* spriteID)

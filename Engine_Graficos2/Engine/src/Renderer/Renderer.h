@@ -12,10 +12,14 @@ class Renderer
 {
 private:
 	Window* window;
-	Program* program;
+	Program* lightingProgram;
+	Program* spriteProgram;
 	std::vector<glm::mat4> models;
 	//glm::mat4 view;
 	//glm::mat4 proj;
+
+	unsigned int lightingShaderId;
+	unsigned int spriteShaderId;
 
 	std::vector<VertexBuffer*> vertexBuffers;
 	std::vector<IndexBuffer*> indexBuffers;
@@ -30,6 +34,13 @@ public:
 	void SwapWindowBuffers();
 	void Draw(unsigned int vertexBuffer, unsigned int indexBuffer, unsigned int modelId, const glm::mat4& view, const glm::mat4& proj);
 	void DrawRange(unsigned int vertexBuffer, unsigned int indexBuffer, unsigned int modelId, const glm::mat4& view, const glm::mat4& proj, unsigned int indexOffset, unsigned int indexCount);
+
+	void DrawWithLighting(unsigned int vertexBuffer, unsigned int indexBuffer, unsigned int modelId,
+		const glm::mat4& view, const glm::mat4& projection,
+		const glm::vec3& lightDir, const glm::vec3& lightColor, const glm::vec3& objectColor);
+
+	void SetSpriteShaderActive();
+	void SetLightingShaderActive();
 
 	glm::mat4 GetModel(unsigned int modelId) const;
 	void DeleteModel(unsigned int modelId);

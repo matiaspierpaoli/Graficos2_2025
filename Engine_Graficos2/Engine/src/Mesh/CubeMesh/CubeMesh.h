@@ -9,6 +9,7 @@
 class GraficosEngine_API CubeMesh : public Mesh
 {
 public:
+    CubeMesh();
     CubeMesh(Sprite* faces[6]);
     ~CubeMesh();
 

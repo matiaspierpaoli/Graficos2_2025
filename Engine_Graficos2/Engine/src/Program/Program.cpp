@@ -93,6 +93,12 @@ void Program::SetUniformMat4F(const std::string& varName, const glm::mat4& matri
 	glUniformMatrix4fv(GetUniformLocation(varName), 1, GL_FALSE, &matrix[0][0]);
 }
 
+void Program::SetUniform3f(const std::string& varName, float v1, float v2, float v3)
+{
+	glUniform3f(GetUniformLocation(varName), v1, v2, v3);
+}
+
+
 void Program::SetUniform4f(const std::string& varName, float v1, float v2, float v3, float v4)
 {
 	glUniform4f(GetUniformLocation(varName), v1, v2, v3, v4);

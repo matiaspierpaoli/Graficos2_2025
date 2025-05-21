@@ -127,21 +127,21 @@ void Game::Init()
 #pragma endregion
 
 	frontWall = new Sprite("res/frontWall.png", 1, Frame(0, 370, 0, 186));
-	frontWall->Translate(0, 0.3, -2);
+	frontWall->Translate(0, 0.3, -2.8);
 	frontWall->Scale(3 , 2.2,0);
 
 	floor = new Sprite("res/floor.png", 1, Frame(0, 1024, 0, 1000));
-	floor->Translate(0, -1.1, 0);
+	floor->Translate(0, -2.4, 0);
 	floor->RotateX(-90);
 	floor->Scale(2.5, 1.8,0);
 	
 	sideWall1 = new Sprite("res/sideWalls.png", 1, Frame(0, 800, 0, 600));
-	sideWall1->Translate(-1.8, 0.3, 0);
+	sideWall1->Translate(-3.4, 0.3, 0);
 	sideWall1->RotateY(90);
 	sideWall1->Scale(2, 1.8,0);
 	
 	sideWall2 = new Sprite("res/sideWalls.png", 1, Frame(0, 800, 0, 600));
-	sideWall2->Translate(1.8, 0.3, 0);
+	sideWall2->Translate(3.4, 0.3, 0);
 	sideWall2->RotateY(-90);
 	sideWall2->Scale(2, 1.8,0);
 
@@ -178,9 +178,9 @@ void Game::Init()
 	//cubeFaces[5] = new Sprite("res/Solid_red.png", 1, Frame(0, 200, 0, 200));
 
 	cube = new Entity3D();
-	cube->SetMesh(new CubeMesh(cubeFaces));
-	cube->Translate(0.0f, 0.0f, -5.0f);
-	cube->Scale(2.0f, 2.0f, 2.0f);
+	cube->SetMesh(new CubeMesh());
+	cube->Translate(0.0f, 0.0f, 5.0f);
+	cube->Scale(1.0f, 1.0f, 1.0f);
 
 	//float vertexCol1[4][4] =
 	//{
@@ -322,32 +322,32 @@ void Game::UpdateInput()
 {
 	glm::vec3 rawInput = { 0, 0, 0 };
 	scaleVectorPlayer1 = 0;
-	glm::vec3 rotationInput = { 0, 0, 0 }; // Nuevo: para rotación en 3 ejes
+	glm::vec3 rotationInput = { 0, 0, 0 };
 
-	// Movimiento (WASD + QE)
+	// Movement (WASD + QE)
 	if (IsKeyPressed(GLFW_KEY_W)) rawInput.y += 1;
 	if (IsKeyPressed(GLFW_KEY_S)) rawInput.y -= 1;
 	if (IsKeyPressed(GLFW_KEY_D)) rawInput.x += 1;
 	if (IsKeyPressed(GLFW_KEY_A)) rawInput.x -= 1;
-	if (IsKeyPressed(GLFW_KEY_E)) rawInput.z += 1; // Subir
-	if (IsKeyPressed(GLFW_KEY_Q)) rawInput.z -= 1; // Bajar
+	if (IsKeyPressed(GLFW_KEY_E)) rawInput.z += 1; // Up
+	if (IsKeyPressed(GLFW_KEY_Q)) rawInput.z -= 1; // Down
 
-	// Rotación (RT/FG/CV)
-	if (IsKeyPressed(GLFW_KEY_R)) rotationInput.x += 1; // Rotar X+
-	if (IsKeyPressed(GLFW_KEY_T)) rotationInput.x -= 1; // Rotar X-
-	if (IsKeyPressed(GLFW_KEY_F)) rotationInput.y += 1; // Rotar Y+
-	if (IsKeyPressed(GLFW_KEY_G)) rotationInput.y -= 1; // Rotar Y-
-	if (IsKeyPressed(GLFW_KEY_C)) rotationInput.z += 1; // Rotar Z+
-	if (IsKeyPressed(GLFW_KEY_V)) rotationInput.z -= 1; // Rotar Z-
+	// Rotation (RT/FG/CV)
+	if (IsKeyPressed(GLFW_KEY_R)) rotationInput.x += 1; // Rotate X+
+	if (IsKeyPressed(GLFW_KEY_T)) rotationInput.x -= 1; // Rotate X-
+	if (IsKeyPressed(GLFW_KEY_F)) rotationInput.y += 1; // Rotate Y+
+	if (IsKeyPressed(GLFW_KEY_G)) rotationInput.y -= 1; // Rotate Y-
+	if (IsKeyPressed(GLFW_KEY_C)) rotationInput.z += 1; // Rotate Z+
+	if (IsKeyPressed(GLFW_KEY_V)) rotationInput.z -= 1; // Rotate Z-
 
-	// Escala (Z/X)
-	if (IsKeyPressed(GLFW_KEY_Z)) scaleVectorPlayer1 += 1; // Agrandar
-	if (IsKeyPressed(GLFW_KEY_X)) scaleVectorPlayer1 -= 1; // Achicar
+	// Scale (Z/X)
+	if (IsKeyPressed(GLFW_KEY_Z)) scaleVectorPlayer1 += 1; // Bigger
+	if (IsKeyPressed(GLFW_KEY_X)) scaleVectorPlayer1 -= 1; // Smaller
 
 	moveVectorPlayer1 = (glm::length(rawInput) > 0.01f) ? glm::normalize(rawInput) : glm::vec3(0, 0, 0);
 	rotationVectorPlayer1 = (glm::length(rotationInput) > 0.01f) ? glm::normalize(rotationInput) : glm::vec3(0, 0, 0);
 
-	// Cambio de cámara (TAB)
+	// Camera mode (TAB)
 	if (IsKeyJustReleased(GLFW_KEY_TAB)) {
 		camera->ToggleMode();
 		static_cast<Sprite*>(sonic)->SetVisible(!static_cast<Sprite*>(sonic)->IsVisible());
@@ -369,7 +369,7 @@ void Game::UpdateInput()
 
 void Game::UpdatePlayer()
 {
-	// Movimiento
+	// Movement
 	if (glm::length(moveVectorPlayer1) > 0.01f) {
 		glm::vec3 forward = camera->GetForward();
 		forward.y = 0;
@@ -387,7 +387,7 @@ void Game::UpdatePlayer()
 		cube->Translate(movement.x, movement.y, movement.z);
 	}
 
-	// Rotación
+	// Rotation
 	if (glm::length(rotationVectorPlayer1) > 0.01f) {
 		float rotationAmount = defaultRotation * time->GetDeltaTime();
 		cube->RotateX(rotationVectorPlayer1.x * rotationAmount);
@@ -395,7 +395,7 @@ void Game::UpdatePlayer()
 		cube->RotateZ(rotationVectorPlayer1.z * rotationAmount);
 	}
 
-	// Escala
+	// Scale
 	if (scaleVectorPlayer1 != 0) {
 		float scaleAmount = scaleVectorPlayer1 * defaultScale.x * time->GetDeltaTime();
 		cube->Scale(scaleAmount, scaleAmount, scaleAmount);
@@ -449,12 +449,10 @@ void Game::RenderScene()
 
 	Window* myWindow = static_cast<Window*>(window);
 
-	//cube->Render(camera);
 	cube->GetMesh()->Render(camera);
 
 	static_cast<Sprite*>(frontWall)->Draw(camera->GetViewMatrix(), camera->GetProjectionMatrix(myWindow));
 	static_cast<Sprite*>(sideWall1)->Draw(camera->GetViewMatrix(), camera->GetProjectionMatrix(myWindow));
 	static_cast<Sprite*>(sideWall2)->Draw(camera->GetViewMatrix(), camera->GetProjectionMatrix(myWindow));
 	static_cast<Sprite*>(floor)->Draw(camera->GetViewMatrix(), camera->GetProjectionMatrix(myWindow));
-	//static_cast<Sprite*>(sonic)->Draw(camera->GetViewMatrix(), camera->GetProjectionMatrix(myWindow));
 }

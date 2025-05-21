@@ -198,8 +198,10 @@ xcopy "$(ProjectDir)shaders" "$(SolutionDir)Game\shaders" /e /s /y /r /i
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <None Include="shaders\fragmentLighting.shader" />
     <None Include="shaders\fragmentShader.shader" />
     <None Include="shaders\fragmentShaderSprite.shader" />
+    <None Include="shaders\vertexLighting.shader" />
     <None Include="shaders\vertexShader.shader" />
     <None Include="shaders\vertexShaderSprite.shader" />
   </ItemGroup>

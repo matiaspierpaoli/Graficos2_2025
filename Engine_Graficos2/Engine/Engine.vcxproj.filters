@@ -125,6 +125,12 @@
     <None Include="shaders\vertexShaderSprite.shader">
       <Filter>res\shaders</Filter>
     </None>
+    <None Include="shaders\vertexLighting.shader">
+      <Filter>res\shaders</Filter>
+    </None>
+    <None Include="shaders\fragmentLighting.shader">
+      <Filter>res\shaders</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\BaseGame\BaseGame.h">

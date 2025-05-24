@@ -6,11 +6,11 @@
 class GraficosEngine_API BaseGame
 {
 private:
-	void* renderer;
 	bool isRunning = true;
 	void* inputManager;
 
 protected:
+	void* renderer;
 	void* window;
 	Time* time;
 	CollisionManager* collisionManager;

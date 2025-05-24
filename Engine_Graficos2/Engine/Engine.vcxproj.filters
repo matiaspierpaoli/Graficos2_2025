@@ -111,6 +111,12 @@
     <Filter Include="Archivos de origen\Mesh\CubeMesh">
       <UniqueIdentifier>{b7565a10-32e4-4a5b-8ec6-709118f1522d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Archivos de encabezado\Material">
+      <UniqueIdentifier>{0717e915-6be6-45f3-ab54-1b03d634e537}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Archivos de encabezado\Light">
+      <UniqueIdentifier>{7c4b6c68-6ea1-4fbe-b36a-4d5d5066c558}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\fragmentShader.shader">
@@ -138,9 +144,6 @@
     </ClInclude>
     <ClInclude Include="src\Window\Window.h">
       <Filter>Archivos de encabezado\Window</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Renderer\Renderer.h">
-      <Filter>Archivos de encabezado\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="src\Program\Program.h">
       <Filter>Archivos de encabezado\Program</Filter>
@@ -226,6 +229,15 @@
     <ClInclude Include="src\Mesh\CubeMesh\CubeMesh.h">
       <Filter>Archivos de encabezado\Mesh\Cube</Filter>
     </ClInclude>
+    <ClInclude Include="src\Renderer\Renderer.h">
+      <Filter>Archivos de encabezado\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Light\Light.h">
+      <Filter>Archivos de encabezado\Light</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Material\Material.h">
+      <Filter>Archivos de encabezado\Material</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Window\Window.cpp">
@@ -299,6 +311,9 @@
     </ClCompile>
     <ClCompile Include="src\Mesh\CubeMesh\CubeMesh.cpp">
       <Filter>Archivos de origen\Mesh\CubeMesh</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Light\Light.cpp">
+      <Filter>Archivos de encabezado\Light</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

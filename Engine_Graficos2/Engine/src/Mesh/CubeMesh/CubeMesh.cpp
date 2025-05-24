@@ -2,6 +2,7 @@
 #include "Camera/Camera.h"
 #include "../src/Window/Window.h"
 #include "RendererSingleton.h"
+#include "Light/Light.h"
 #include <glm/gtc/type_ptr.hpp>
 
 
@@ -79,26 +80,25 @@ void CubeMesh::SetupMesh()
     *iBuffer = RendererSingleton::GetRenderer()->GetNewIndexBuffer(indices, 36);
 }
 
-void CubeMesh::Render(Camera* camera)
-{
-    RendererSingleton::GetRenderer()->SetLightingShaderActive();
+void CubeMesh::Render(Camera* camera, Material cubeMaterial, std::vector<DirectionalLight> activeDirLights, std::vector<PointLight> activePointLights, std::vector<SpotLight> activeSpotLights) {
+    Renderer* renderer = RendererSingleton::GetRenderer();
+    renderer->SetLightingShaderActive();
 
-    Window* window = RendererSingleton::GetRenderer()->GetWindow();
+    // Obtener matrices de vista y proyección
     glm::mat4 view = camera->GetViewMatrix();
-    glm::mat4 proj = camera->GetProjectionMatrix(window);
+    glm::mat4 proj = camera->GetProjectionMatrix(renderer->GetWindow());
 
-    glm::vec3 lightDir = glm::vec3(-0.2f, -1.0f, -0.3f); // Directional light
-    glm::vec3 lightColor = glm::vec3(1.0f, 1.0f, 1.0f);  // White light
-    glm::vec3 objectColor = glm::vec3(1.0f, 0.0f, 0.0f); // Solid red
-
-    RendererSingleton::GetRenderer()->DrawWithLighting(
+    // Dibujar con el nuevo método
+    renderer->DrawWithLighting(
         *vBuffer,
         *iBuffer,
         modelId,
         view,
         proj,
-        lightDir,
-        lightColor,
-        objectColor
+        cubeMaterial,
+        camera->GetPosition(),
+        activeDirLights,
+        activePointLights,
+        activeSpotLights
     );
 }

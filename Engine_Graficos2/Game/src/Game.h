@@ -6,6 +6,8 @@
 #include "Mesh/CubeMesh/CubeMesh.h"
 #include "Sprite/Sprite.h"
 #include "Camera/Camera.h"
+#include "Light/Light.h"
+#include "Material/Material.h"
 
 class Game : public BaseGame
 {
@@ -25,6 +27,12 @@ private:
 
 	Entity3D* cube;
 	Sprite* cubeFaces[6];
+
+	std::vector<DirectionalLight> directionalLights;
+	std::vector<PointLight> pointLights;
+	std::vector<SpotLight> spotLights;
+
+	Material goldMaterial;
 
 	float traslateX;
 	float traslateY;

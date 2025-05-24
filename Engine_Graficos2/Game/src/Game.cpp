@@ -217,6 +217,37 @@ void Game::Init()
 	isMovingRight = false;
 	isMovingNear = false;
 	isMovingFurther = false;
+
+	directionalLights = std::vector<DirectionalLight>();
+	pointLights = std::vector<PointLight>();
+	spotLights = std::vector<SpotLight>();
+
+	PointLight redLight;
+	redLight.position = glm::vec3(0.0f, 3.0f, 5.0f); // Posición correcta (arriba del cubo)
+	redLight.color = glm::vec3(1.0f, 0.0f, 0.0f);     // Color rojo (correcto)
+	redLight.intensity = 10.0f;                       // Intensidad alta (puede ser excesiva)
+	redLight.constant = 1.0f;                         // Parámetros de atenuación estándar
+	redLight.linear = 0.09f;
+	redLight.quadratic = 0.032f;
+
+	pointLights.push_back(redLight);
+
+	DirectionalLight sunLight;
+	sunLight.direction = glm::vec3(-0.2f, -1.0f, -0.3f);
+	sunLight.color = glm::vec3(1.0f);
+	sunLight.intensity = 1.0f;
+	directionalLights.push_back(sunLight);
+
+
+	goldMaterial = Material(
+		glm::vec3(0.24725f, 0.1995f, 0.0745f),    // ambient
+		glm::vec3(0.75164f, 0.60648f, 0.22648f),  // diffuse
+		glm::vec3(0.628281f, 0.555802f, 0.366065f), // specular
+		51.2f                                     // shininess
+	);
+
+	cube->SetMaterial(goldMaterial);
+
 }
 
 void Game::DeInit()
@@ -449,7 +480,7 @@ void Game::RenderScene()
 
 	Window* myWindow = static_cast<Window*>(window);
 
-	cube->GetMesh()->Render(camera);
+	cube->GetMesh()->Render(camera, cube->GetMaterial(), directionalLights, pointLights, spotLights);
 
 	static_cast<Sprite*>(frontWall)->Draw(camera->GetViewMatrix(), camera->GetProjectionMatrix(myWindow));
 	static_cast<Sprite*>(sideWall1)->Draw(camera->GetViewMatrix(), camera->GetProjectionMatrix(myWindow));

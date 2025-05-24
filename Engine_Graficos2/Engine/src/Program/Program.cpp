@@ -56,10 +56,19 @@ unsigned int Program::CreateShader(const std::string vertexShader, const std::st
 	glAttachShader(id, vs);
 	glAttachShader(id, fs);
 	glLinkProgram(id);
+
+	int success;
+	glGetProgramiv(id, GL_LINK_STATUS, &success);
+	if (!success) {
+		char infoLog[512];
+		glGetProgramInfoLog(id, 512, NULL, infoLog);
+		std::cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" << infoLog << std::endl;
+	}
+
 	glValidateProgram(id);
 
-	glDeleteProgram(vs);
-	glDeleteProgram(fs);
+	glDeleteShader(vs);
+	glDeleteShader(fs);
 
 	return id;
 }
@@ -91,6 +100,11 @@ unsigned int Program::CompileShader(const std::string& source, unsigned int type
 void Program::SetUniformMat4F(const std::string& varName, const glm::mat4& matrix)
 {
 	glUniformMatrix4fv(GetUniformLocation(varName), 1, GL_FALSE, &matrix[0][0]);
+}
+
+void Program::SetUniform1f(const std::string& varName, float v1)
+{
+	glUniform1f(GetUniformLocation(varName), v1);
 }
 
 void Program::SetUniform3f(const std::string& varName, float v1, float v2, float v3)

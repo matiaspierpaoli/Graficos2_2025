@@ -7,6 +7,8 @@
 #include "Buffers/VertexBuffer.h"
 #include "Buffers/IndexBuffer.h"
 #include "VertexArray.h"
+#include "Material/Material.h"
+#include "Light/Light.h"
 
 class Renderer
 {
@@ -24,7 +26,11 @@ private:
 	std::vector<VertexBuffer*> vertexBuffers;
 	std::vector<IndexBuffer*> indexBuffers;
 	std::vector<VertexArray*> vertexArrays;
+
 	//unsigned int vao;
+
+	const int MAX_POINT_LIGHTS = 4;
+	const int MAX_SPOT_LIGHTS = 2;
 
 public:
 	Renderer(Window* window);
@@ -35,9 +41,17 @@ public:
 	void Draw(unsigned int vertexBuffer, unsigned int indexBuffer, unsigned int modelId, const glm::mat4& view, const glm::mat4& proj);
 	void DrawRange(unsigned int vertexBuffer, unsigned int indexBuffer, unsigned int modelId, const glm::mat4& view, const glm::mat4& proj, unsigned int indexOffset, unsigned int indexCount);
 
-	void DrawWithLighting(unsigned int vertexBuffer, unsigned int indexBuffer, unsigned int modelId,
-		const glm::mat4& view, const glm::mat4& projection,
-		const glm::vec3& lightDir, const glm::vec3& lightColor, const glm::vec3& objectColor);
+	void DrawWithLighting(
+		unsigned int vertexBuffer,
+		unsigned int indexBuffer,
+		unsigned int modelId,
+		const glm::mat4& view,
+		const glm::mat4& proj,
+		const Material& material,
+		glm::vec3 camPos,
+		std::vector<DirectionalLight> activeDirLights,
+		std::vector<PointLight> activePointLights,
+		std::vector<SpotLight> activeSpotLights);
 
 	void SetSpriteShaderActive();
 	void SetLightingShaderActive();
@@ -50,6 +64,9 @@ public:
 	unsigned int GetNewIndexBuffer(unsigned int* indices, unsigned int count);
 	Window* GetWindow();
 
+	Program* GetLightingProgram();
+	Program* GetSpriteProgram();
+
 	unsigned int GetNewModelId(glm::mat4 model);
 	void SetModel(glm::mat4 model, unsigned int modelId);
 	void GetNewSprite(std::string imgPath, int* width, int* height, int* bpp, unsigned int* imageID);
@@ -58,4 +75,8 @@ public:
 	void BindSprite(unsigned int slot, unsigned int spriteID);
 	void UnbindSprite();
 	void SetUniversalSpriteSettings();
+
+	void AddDirectionalLight(const DirectionalLight& light);
+	void AddPointLight(const PointLight& light);
+	void AddSpotLight(const SpotLight& light);
 };

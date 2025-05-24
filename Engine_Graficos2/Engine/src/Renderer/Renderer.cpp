@@ -14,7 +14,7 @@ Renderer::Renderer(Window* window)
 	this->window = window;
 
 	lightingProgram = new Program();
-	spriteProgram = new Program();
+	spriteProgram = new Program();	
 
 	glm::vec3 cameraPos = glm::vec3(0.0f,0.0f,3.0f);
 
@@ -121,9 +121,18 @@ void Renderer::DrawRange(
 	);
 }
 
-void Renderer::DrawWithLighting(unsigned int vertexBuffer, unsigned int indexBuffer, unsigned int modelId,
-	const glm::mat4& view, const glm::mat4& proj,
-	const glm::vec3& lightDir, const glm::vec3& lightColor, const glm::vec3& objectColor)
+void Renderer::DrawWithLighting(
+	unsigned int vertexBuffer,
+	unsigned int indexBuffer,
+	unsigned int modelId,
+	const glm::mat4& view,
+	const glm::mat4& proj,
+	const Material& material,
+	glm::vec3 camPos,
+	std::vector<DirectionalLight> activeDirLights,
+	std::vector<PointLight> activePointLights,
+	std::vector<SpotLight> activeSpotLights
+)
 {
 	VertexBuffer* vb = vertexBuffers[vertexBuffer];
 	IndexBuffer* ib = indexBuffers[indexBuffer];
@@ -133,17 +142,56 @@ void Renderer::DrawWithLighting(unsigned int vertexBuffer, unsigned int indexBuf
 	va->Bind();
 	ib->Bind();
 
+	// Matrices
 	glm::mat4 model = models[modelId];
 	lightingProgram->SetUniformMat4F("model", model);
 	lightingProgram->SetUniformMat4F("view", view);
 	lightingProgram->SetUniformMat4F("projection", proj);
 
-	lightingProgram->SetUniform3f("lightDir", lightDir.x, lightDir.y, lightDir.z);
-	lightingProgram->SetUniform3f("lightColor", lightColor.x, lightColor.y, lightColor.z);
-	lightingProgram->SetUniform3f("objectColor", objectColor.x, objectColor.y, objectColor.z);
+	// Cámara
+	lightingProgram->SetUniform3f("viewPos", camPos.x, camPos.y, camPos.z);
+
+	// Material
+	lightingProgram->SetUniform3f("material.ambient", material.ambient.r, material.ambient.g, material.ambient.b);
+	lightingProgram->SetUniform3f("material.diffuse", material.diffuse.r, material.diffuse.g, material.diffuse.b);
+	lightingProgram->SetUniform3f("material.specular", material.specular.r, material.specular.g, material.specular.b);
+	lightingProgram->SetUniform1f("material.shininess", material.shininess);
+
+	// Direccional: usar solo la primera
+	if (!activeDirLights.empty()) {
+		const DirectionalLight& dl = activeDirLights[0];
+		lightingProgram->SetUniform3f("dirLight.direction", dl.direction.x, dl.direction.y, dl.direction.z);
+		lightingProgram->SetUniform3f("dirLight.color", dl.color.r, dl.color.g, dl.color.b);
+		lightingProgram->SetUniform1f("dirLight.intensity", dl.intensity);
+	}
+
+	// Point Lights
+	for (size_t i = 0; i < std::min(activePointLights.size(), size_t(4)); i++) {
+		const PointLight& pl = activePointLights[i];
+		std::string prefix = "pointLights[" + std::to_string(i) + "].";
+		lightingProgram->SetUniform3f(prefix + "position", pl.position.x, pl.position.y, pl.position.z);
+		lightingProgram->SetUniform3f(prefix + "color", pl.color.r, pl.color.g, pl.color.b);
+		lightingProgram->SetUniform1f(prefix + "intensity", pl.intensity);
+		lightingProgram->SetUniform1f(prefix + "constant", pl.constant);
+		lightingProgram->SetUniform1f(prefix + "linear", pl.linear);
+		lightingProgram->SetUniform1f(prefix + "quadratic", pl.quadratic);
+	}
+
+	// Spot Lights
+	for (size_t i = 0; i < std::min(activeSpotLights.size(), size_t(2)); i++) {
+		const SpotLight& sl = activeSpotLights[i];
+		std::string prefix = "spotLights[" + std::to_string(i) + "].";
+		lightingProgram->SetUniform3f(prefix + "position", sl.position.x, sl.position.y, sl.position.z);
+		lightingProgram->SetUniform3f(prefix + "direction", sl.direction.x, sl.direction.y, sl.direction.z);
+		lightingProgram->SetUniform3f(prefix + "color", sl.color.r, sl.color.g, sl.color.b);
+		lightingProgram->SetUniform1f(prefix + "intensity", sl.intensity);
+		lightingProgram->SetUniform1f(prefix + "cutOff", sl.cutOff);
+		lightingProgram->SetUniform1f(prefix + "outerCutOff", sl.outerCutOff);
+	}
 
 	glDrawElements(GL_TRIANGLES, ib->GetCount(), GL_UNSIGNED_INT, nullptr);
 }
+
 
 void Renderer::SetSpriteShaderActive()
 {
@@ -221,6 +269,16 @@ unsigned int Renderer::GetNewIndexBuffer(unsigned int* indices, unsigned int ind
 Window* Renderer::GetWindow()
 {
 	return window;
+}
+
+Program* Renderer::GetLightingProgram()
+{
+	return lightingProgram;
+}
+
+Program* Renderer::GetSpriteProgram()
+{
+	return spriteProgram;
 }
 
 unsigned int Renderer::GetNewModelId(glm::mat4 model)

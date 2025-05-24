@@ -3,7 +3,8 @@
 #include <../libs/glm/glm.hpp>
 #include <vector>
 #include "Camera/Camera.h"
-
+#include "Material/Material.h"
+#include "Light/Light.h"
 
 class GraficosEngine_API Mesh {
 protected:
@@ -21,5 +22,5 @@ public:
 
     void SetModelId(unsigned int id) { modelId = id; }
 
-    virtual void Render(class Camera* camera) = 0;
+    virtual void Render(class Camera* camera, Material cubeMaterial, std::vector<DirectionalLight> activeDirLights, std::vector<PointLight> activePointLights, std::vector<SpotLight> activeSpotLights) = 0;
 };

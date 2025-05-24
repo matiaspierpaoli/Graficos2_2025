@@ -2,6 +2,9 @@
 #include <../libs/glm/glm.hpp>
 #include "Exports.h"
 
+constexpr int MAX_POINT_LIGHTS = 4;
+constexpr int MAX_SPOT_LIGHTS = 2;
+
 class Light {
 public:
     glm::vec3 color;
@@ -37,5 +40,9 @@ public:
     float cutOff; // Internal angle
     float outerCutOff; // External angle
 
-    SpotLight(const glm::vec3& pos = glm::vec3(0.0f), const glm::vec3& dir = glm::vec3(0.0f, 0.0f, -1.0f));
+    float constant;
+    float linear;
+    float quadratic;
+
+    SpotLight(const glm::vec3& pos = glm::vec3(0.0f), const glm::vec3& dir = glm::vec3(0.0f, 0.0f, -1.0f), float cut = 12.5f, float outerCut = 17.5f);
 };

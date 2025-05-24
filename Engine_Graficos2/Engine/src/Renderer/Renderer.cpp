@@ -148,49 +148,48 @@ void Renderer::DrawWithLighting(
 	lightingProgram->SetUniformMat4F("view", view);
 	lightingProgram->SetUniformMat4F("projection", proj);
 
+	// Material
+	lightingProgram->SetUniform3f("materialAmbient", material.ambient.r, material.ambient.g, material.ambient.b);
+	lightingProgram->SetUniform3f("materialDiffuse", material.diffuse.r, material.diffuse.g, material.diffuse.b);
+	lightingProgram->SetUniform3f("materialSpecular", material.specular.r, material.specular.g, material.specular.b);
+	lightingProgram->SetUniform1f("materialShininess", material.shininess);
+
+	// Punto de luz (solo la primera)
+	if (!activePointLights.empty()) {
+		const PointLight& light = activePointLights[0];
+		lightingProgram->SetUniform3f("lightPos", light.position.x, light.position.y, light.position.z);
+		lightingProgram->SetUniform3f("lightColor", light.color.r, light.color.g, light.color.b);
+		lightingProgram->SetUniform1f("lightConstant", light.constant);
+		lightingProgram->SetUniform1f("lightLinear", light.linear);
+		lightingProgram->SetUniform1f("lightQuadratic", light.quadratic);
+	}
+
+	// Dirección de luz (solo la primera)
+	if (!activeDirLights.empty()) {
+		const DirectionalLight& light = activeDirLights[0];
+		lightingProgram->SetUniform3f("dirLightDir", light.direction.x, light.direction.y, light.direction.z);
+		lightingProgram->SetUniform3f("dirLightColor", light.color.r, light.color.g, light.color.b);
+	}
+
+	// Spotlight (solo la primera)
+	if (!activeSpotLights.empty()) {
+		const SpotLight& spot = activeSpotLights[0];
+		lightingProgram->SetUniform3f("spotLightPos", spot.position.x, spot.position.y, spot.position.z);
+		lightingProgram->SetUniform3f("spotLightDir", spot.direction.x, spot.direction.y, spot.direction.z);
+		lightingProgram->SetUniform3f("spotLightColor", spot.color.r, spot.color.g, spot.color.b);
+		lightingProgram->SetUniform1f("spotLightCutOff", glm::cos(glm::radians(spot.cutOff)));
+		lightingProgram->SetUniform1f("spotLightOuterCutOff", glm::cos(glm::radians(spot.outerCutOff)));
+		lightingProgram->SetUniform1f("spotLightConstant", spot.constant);
+		lightingProgram->SetUniform1f("spotLightLinear", spot.linear);
+		lightingProgram->SetUniform1f("spotLightQuadratic", spot.quadratic);
+	}
+
 	// Cámara
 	lightingProgram->SetUniform3f("viewPos", camPos.x, camPos.y, camPos.z);
 
-	// Material
-	lightingProgram->SetUniform3f("material.ambient", material.ambient.r, material.ambient.g, material.ambient.b);
-	lightingProgram->SetUniform3f("material.diffuse", material.diffuse.r, material.diffuse.g, material.diffuse.b);
-	lightingProgram->SetUniform3f("material.specular", material.specular.r, material.specular.g, material.specular.b);
-	lightingProgram->SetUniform1f("material.shininess", material.shininess);
-
-	// Direccional: usar solo la primera
-	if (!activeDirLights.empty()) {
-		const DirectionalLight& dl = activeDirLights[0];
-		lightingProgram->SetUniform3f("dirLight.direction", dl.direction.x, dl.direction.y, dl.direction.z);
-		lightingProgram->SetUniform3f("dirLight.color", dl.color.r, dl.color.g, dl.color.b);
-		lightingProgram->SetUniform1f("dirLight.intensity", dl.intensity);
-	}
-
-	// Point Lights
-	for (size_t i = 0; i < std::min(activePointLights.size(), size_t(4)); i++) {
-		const PointLight& pl = activePointLights[i];
-		std::string prefix = "pointLights[" + std::to_string(i) + "].";
-		lightingProgram->SetUniform3f(prefix + "position", pl.position.x, pl.position.y, pl.position.z);
-		lightingProgram->SetUniform3f(prefix + "color", pl.color.r, pl.color.g, pl.color.b);
-		lightingProgram->SetUniform1f(prefix + "intensity", pl.intensity);
-		lightingProgram->SetUniform1f(prefix + "constant", pl.constant);
-		lightingProgram->SetUniform1f(prefix + "linear", pl.linear);
-		lightingProgram->SetUniform1f(prefix + "quadratic", pl.quadratic);
-	}
-
-	// Spot Lights
-	for (size_t i = 0; i < std::min(activeSpotLights.size(), size_t(2)); i++) {
-		const SpotLight& sl = activeSpotLights[i];
-		std::string prefix = "spotLights[" + std::to_string(i) + "].";
-		lightingProgram->SetUniform3f(prefix + "position", sl.position.x, sl.position.y, sl.position.z);
-		lightingProgram->SetUniform3f(prefix + "direction", sl.direction.x, sl.direction.y, sl.direction.z);
-		lightingProgram->SetUniform3f(prefix + "color", sl.color.r, sl.color.g, sl.color.b);
-		lightingProgram->SetUniform1f(prefix + "intensity", sl.intensity);
-		lightingProgram->SetUniform1f(prefix + "cutOff", sl.cutOff);
-		lightingProgram->SetUniform1f(prefix + "outerCutOff", sl.outerCutOff);
-	}
-
 	glDrawElements(GL_TRIANGLES, ib->GetCount(), GL_UNSIGNED_INT, nullptr);
 }
+
 
 
 void Renderer::SetSpriteShaderActive()

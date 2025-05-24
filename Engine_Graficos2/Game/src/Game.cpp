@@ -238,6 +238,16 @@ void Game::Init()
 	sunLight.intensity = 1.0f;
 	directionalLights.push_back(sunLight);
 
+	SpotLight spot;
+	spot.position = glm::vec3(0.0f, 4.0f, 3.0f);
+	spot.direction = glm::vec3(0.0f, -1.0f, -1.0f);  // Apunta hacia abajo y hacia adelante
+	spot.color = glm::vec3(1.0f, 1.0f, 1.0f);
+	spot.cutOff = 12.5f;
+	spot.outerCutOff = 17.5f;
+	spot.constant = 1.0f;
+	spot.linear = 0.09f;
+	spot.quadratic = 0.032f;
+	spotLights.push_back(spot);
 
 	goldMaterial = Material(
 		glm::vec3(0.24725f, 0.1995f, 0.0745f),    // ambient

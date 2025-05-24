@@ -154,42 +154,60 @@ void Renderer::DrawWithLighting(
 	lightingProgram->SetUniform3f("materialSpecular", material.specular.r, material.specular.g, material.specular.b);
 	lightingProgram->SetUniform1f("materialShininess", material.shininess);
 
-	// Punto de luz (solo la primera)
-	if (!activePointLights.empty()) {
-		const PointLight& light = activePointLights[0];
-		lightingProgram->SetUniform3f("lightPos", light.position.x, light.position.y, light.position.z);
-		lightingProgram->SetUniform3f("lightColor", light.color.r, light.color.g, light.color.b);
-		lightingProgram->SetUniform1f("lightConstant", light.constant);
-		lightingProgram->SetUniform1f("lightLinear", light.linear);
-		lightingProgram->SetUniform1f("lightQuadratic", light.quadratic);
-	}
-
-	// Dirección de luz (solo la primera)
+	// Directional lights
 	if (!activeDirLights.empty()) {
 		const DirectionalLight& light = activeDirLights[0];
-		lightingProgram->SetUniform3f("dirLightDir", light.direction.x, light.direction.y, light.direction.z);
-		lightingProgram->SetUniform3f("dirLightColor", light.color.r, light.color.g, light.color.b);
+
+		std::string prefix = "dirLight.";
+		lightingProgram->SetUniform3f(prefix + "direction", light.direction.x, light.direction.y, light.direction.z);
+		lightingProgram->SetUniform3f(prefix + "color", light.color.r, light.color.g, light.color.b);
+	}
+	
+	// Point lights
+	lightingProgram->SetUniform1i("numPointLights", std::min(static_cast<int>(activePointLights.size()), MAX_POINT_LIGHTS));
+
+	if (!activePointLights.empty()) {
+		
+		for (int i = 0; i < activePointLights.size(); i++)
+		{
+			const PointLight& light = activePointLights[i];
+
+			std::string prefix = "pointLights[" + std::to_string(i) + "].";
+			lightingProgram->SetUniform3f(prefix + "position", light.position.x, light.position.y, light.position.z);
+			lightingProgram->SetUniform3f(prefix + "color", light.color.r, light.color.g, light.color.b);
+			lightingProgram->SetUniform1f(prefix + "constant", light.constant);
+			lightingProgram->SetUniform1f(prefix + "linear", light.linear);
+			lightingProgram->SetUniform1f(prefix + "quadratic", light.quadratic);
+		}
+		
 	}
 
-	// Spotlight (solo la primera)
+	// Spot lights
+	lightingProgram->SetUniform1i("numSpotLights", std::min(static_cast<int>(activeSpotLights.size()), MAX_SPOT_LIGHTS));
+
 	if (!activeSpotLights.empty()) {
-		const SpotLight& spot = activeSpotLights[0];
-		lightingProgram->SetUniform3f("spotLightPos", spot.position.x, spot.position.y, spot.position.z);
-		lightingProgram->SetUniform3f("spotLightDir", spot.direction.x, spot.direction.y, spot.direction.z);
-		lightingProgram->SetUniform3f("spotLightColor", spot.color.r, spot.color.g, spot.color.b);
-		lightingProgram->SetUniform1f("spotLightCutOff", glm::cos(glm::radians(spot.cutOff)));
-		lightingProgram->SetUniform1f("spotLightOuterCutOff", glm::cos(glm::radians(spot.outerCutOff)));
-		lightingProgram->SetUniform1f("spotLightConstant", spot.constant);
-		lightingProgram->SetUniform1f("spotLightLinear", spot.linear);
-		lightingProgram->SetUniform1f("spotLightQuadratic", spot.quadratic);
+
+		for (int i = 0; i < activeSpotLights.size(); i++)
+		{
+			const SpotLight& spot = activeSpotLights[i];
+
+			std::string prefix = "spotLights[" + std::to_string(i) + "].";
+			lightingProgram->SetUniform3f(prefix + "position", spot.position.x, spot.position.y, spot.position.z);
+			lightingProgram->SetUniform3f(prefix + "direction", spot.direction.x, spot.direction.y, spot.direction.z);
+			lightingProgram->SetUniform3f(prefix + "color", spot.color.r, spot.color.g, spot.color.b);
+			lightingProgram->SetUniform1f(prefix + "cutOff", glm::cos(glm::radians(spot.cutOff)));
+			lightingProgram->SetUniform1f(prefix + "outerCutOff", glm::cos(glm::radians(spot.outerCutOff)));
+			lightingProgram->SetUniform1f(prefix + "constant", spot.constant);
+			lightingProgram->SetUniform1f(prefix + "linear", spot.linear);
+			lightingProgram->SetUniform1f(prefix + "quadratic", spot.quadratic);
+		}
 	}
 
-	// Cámara
+	// Camera
 	lightingProgram->SetUniform3f("viewPos", camPos.x, camPos.y, camPos.z);
 
 	glDrawElements(GL_TRIANGLES, ib->GetCount(), GL_UNSIGNED_INT, nullptr);
 }
-
 
 
 void Renderer::SetSpriteShaderActive()
@@ -201,7 +219,6 @@ void Renderer::SetLightingShaderActive()
 {
 	glUseProgram(lightingShaderId);
 }
-
 
 glm::mat4 Renderer::GetModel(unsigned int modelId) const
 {

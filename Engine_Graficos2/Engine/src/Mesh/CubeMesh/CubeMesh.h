@@ -17,5 +17,5 @@ public:
 
 private:
     void SetupMesh();
-    Sprite* faces[6]; // Referencias a los sprites (para texturas)
+    Sprite* faces[6];
 };

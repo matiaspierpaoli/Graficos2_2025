@@ -63,153 +63,22 @@ void Game::Init()
 	defaultScale.x = 1.0f;
 	defaultScale.y = 1.0f;
 
-	int sonicSpriteSheetWidth = 830;
-	int sonicSpriteSheetHeight = 465;
-
-#pragma region Idle 
-	sonicIdleFrames.push_back(Frame(43, 74, sonicSpriteSheetHeight - 68, sonicSpriteSheetHeight - 22));
-	sonicIdleFrames.push_back(Frame(74, 105, sonicSpriteSheetHeight - 68, sonicSpriteSheetHeight - 22));
-	sonicIdleFrames.push_back(Frame(105, 137, sonicSpriteSheetHeight - 68, sonicSpriteSheetHeight - 22));
-	sonicIdleFrames.push_back(Frame(137, 169, sonicSpriteSheetHeight - 68, sonicSpriteSheetHeight - 22));
-	sonicIdleFrames.push_back(Frame(169, 199, sonicSpriteSheetHeight - 68, sonicSpriteSheetHeight - 22));
-	sonicIdleFrames.push_back(Frame(199, 230, sonicSpriteSheetHeight - 68, sonicSpriteSheetHeight - 22));
-	sonicIdleFrames.push_back(Frame(230, 260, sonicSpriteSheetHeight - 68, sonicSpriteSheetHeight - 22));
-	sonicIdleFrames.push_back(Frame(22, 54, sonicSpriteSheetHeight - 113, sonicSpriteSheetHeight - 72));
-	sonicIdleFrames.push_back(Frame(54, 82, sonicSpriteSheetHeight - 113, sonicSpriteSheetHeight - 72));
-	sonicIdleFrames.push_back(Frame(82, 115, sonicSpriteSheetHeight - 113, sonicSpriteSheetHeight - 72));
-	sonicIdleFrames.push_back(Frame(115, 150, sonicSpriteSheetHeight - 113, sonicSpriteSheetHeight - 72));
-	sonicIdleFrames.push_back(Frame(150, 180, sonicSpriteSheetHeight - 113, sonicSpriteSheetHeight - 72));
-#pragma endregion 
-
-	#pragma region Run 
-	sonicRunFrames.push_back(Frame(276, 304, sonicSpriteSheetHeight - 162, sonicSpriteSheetHeight - 117));
-	sonicRunFrames.push_back(Frame(304, 335, sonicSpriteSheetHeight - 162, sonicSpriteSheetHeight - 117));
-	sonicRunFrames.push_back(Frame(335, 377, sonicSpriteSheetHeight - 162, sonicSpriteSheetHeight - 117));
-	sonicRunFrames.push_back(Frame(377, 417, sonicSpriteSheetHeight - 162, sonicSpriteSheetHeight - 117));
-	sonicRunFrames.push_back(Frame(417, 455, sonicSpriteSheetHeight - 162, sonicSpriteSheetHeight - 117));
-	sonicRunFrames.push_back(Frame(455, 490, sonicSpriteSheetHeight - 162, sonicSpriteSheetHeight - 117));
-	sonicRunFrames.push_back(Frame(490, 520, sonicSpriteSheetHeight - 162, sonicSpriteSheetHeight - 117));
-	sonicRunFrames.push_back(Frame(520, 555, sonicSpriteSheetHeight - 162, sonicSpriteSheetHeight - 117));
-	sonicRunFrames.push_back(Frame(555, 593, sonicSpriteSheetHeight - 162, sonicSpriteSheetHeight - 117));
-	sonicRunFrames.push_back(Frame(593, 634, sonicSpriteSheetHeight - 162, sonicSpriteSheetHeight - 117));
-	sonicRunFrames.push_back(Frame(642, 672, sonicSpriteSheetHeight - 162, sonicSpriteSheetHeight - 117));
-	sonicRunFrames.push_back(Frame(672, 705, sonicSpriteSheetHeight - 162, sonicSpriteSheetHeight - 117));
-#pragma endregion 
-
-
-	sonic = new Sprite("res/Sonic_Mania_Sprite_Sheet.png",  12, sonicIdleFrames.at(0));
-	//sonic->Scale(-0.8, -0.8);
-	//sonic->Translate(512 / 2 - 70, 257 / 2 - 30);
-
-	sonicIdleAnim = new Animation(3, sonicSpriteSheetWidth, sonicSpriteSheetHeight, sonicIdleFrames);
-	sonicRunAnim = new Animation(0.8, sonicSpriteSheetWidth, sonicSpriteSheetHeight, sonicRunFrames);
+	floor = new Entity3D();
+	floor->SetMesh(new CubeMesh());
+	floor->Translate(0.0f, -3.0f, 5.0f);
+	floor->Scale(50.0f, 2.0f, 50.0f);
 	
-	static_cast<Sprite*>(sonic)->AddAnimation(sonicIdleAnim);
-	static_cast<Sprite*>(sonic)->AddAnimation(sonicRunAnim);
-
-#pragma endregion Cartel
-
-	cartelFrames.push_back(Frame(130, 181, sonicSpriteSheetHeight - 372, sonicSpriteSheetHeight - 322));
-	cartelFrames.push_back(Frame(181, 230, sonicSpriteSheetHeight - 372, sonicSpriteSheetHeight - 322));
-	cartelFrames.push_back(Frame(230, 279, sonicSpriteSheetHeight - 372, sonicSpriteSheetHeight - 322));
-	cartelFrames.push_back(Frame(279, 328, sonicSpriteSheetHeight - 372, sonicSpriteSheetHeight - 322));
-	cartelFrames.push_back(Frame(328, 378, sonicSpriteSheetHeight - 372, sonicSpriteSheetHeight - 322));
-
-	cartel = new Sprite("res/Sonic_Mania_Sprite_Sheet.png", 5, cartelFrames.at(0));
-	//cartel->Scale(-0.6, -0.6);
-	cartel->Translate(0, 0, -2);
-	//cartel->Scale(1.0, 1.0);
-
-	cartelAnim = new Animation(3, sonicSpriteSheetWidth, sonicSpriteSheetHeight, cartelFrames);
-
-	static_cast<Sprite*>(cartel)->AddAnimation(cartelAnim);
-
-#pragma endregion
-
-	frontWall = new Sprite("res/frontWall.png", 1, Frame(0, 370, 0, 186));
-	frontWall->Translate(0, 0.3, -2.8);
-	frontWall->Scale(3 , 2.2,0);
-
-	floor = new Sprite("res/floor.png", 1, Frame(0, 1024, 0, 1000));
-	floor->Translate(0, -2.4, 0);
-	floor->RotateX(-90);
-	floor->Scale(2.5, 1.8,0);
-	
-	sideWall1 = new Sprite("res/sideWalls.png", 1, Frame(0, 800, 0, 600));
-	sideWall1->Translate(-3.4, 0.3, 0);
-	sideWall1->RotateY(90);
-	sideWall1->Scale(2, 1.8,0);
-	
-	sideWall2 = new Sprite("res/sideWalls.png", 1, Frame(0, 800, 0, 600));
-	sideWall2->Translate(3.4, 0.3, 0);
-	sideWall2->RotateY(-90);
-	sideWall2->Scale(2, 1.8,0);
-
-
-	//float halfSize = 0.5f;
-
-	//// Front face
-	//sonicFaces[0]->Translate(0, 0, halfSize);
-	//// Back face
-	//sonicFaces[1]->Translate(0, 0, -halfSize);
-	//sonicFaces[1]->RotateY(180);
-
-	//// Right face
-	//sonicFaces[2]->Translate(halfSize, 0, 0);
-	//sonicFaces[2]->RotateY(-90);
-
-	//// Left face
-	//sonicFaces[3]->Translate(-halfSize, 0, 0);
-	//sonicFaces[3]->RotateY(90);
-
-	//// Up face
-	//sonicFaces[4]->Translate(0, halfSize, 0);
-	//sonicFaces[4]->RotateX(-90);
-
-	//// Down face
-	//sonicFaces[5]->Translate(0, -halfSize, 0);
-	//sonicFaces[5]->RotateX(90);
-	
-	for (int i = 0; i < 6; i++) 
+	/*for (int i = 0; i < 6; i++) 
 	{
 		cubeFaces[i] = new Sprite("res/Solid_red.png", 1, Frame(0, 200, 0, 200));
-	}
-
-	//cubeFaces[5] = new Sprite("res/Solid_red.png", 1, Frame(0, 200, 0, 200));
+	}*/
 
 	cube = new Entity3D();
 	cube->SetMesh(new CubeMesh());
 	cube->Translate(0.0f, 0.0f, 5.0f);
 	cube->Scale(1.0f, 1.0f, 1.0f);
 
-	//float vertexCol1[4][4] =
-	//{
-	//	 0.0f,  1.0f, 0.0f, 1.0f,
-	//	 0.0f,  1.0f, 0.0f, 1.0f,
-	//	 0.0f,  1.0f, 0.0f, 1.0f,
-	//	 0.0f,  1.0f, 0.0f, 1.0f,
-	//};
-
-	//float vertexCol2[4][4] =
-	//{
-	//	 0.0f,  0.0f, 1.0f, 1.0f,
-	//	 0.0f,  0.0f, 1.0f, 1.0f,
-	//	 0.0f,  0.0f, 1.0f, 1.0f,
-	//	 0.0f,  0.0f, 1.0f, 1.0f,
-	//};
-
-	//square1 = new Square(vertexCol1);
-	//square1->Scale(100, 100);
-	//square1->Translate(200, 257 / 2);
-
-	//square2 = new Square(vertexCol2);
-	//square2->Scale(100, 100);
-	//square2->Translate(512 - 200, 257 / 2);
-
 	camera = new Camera(CameraMode::ThirdPerson, 5.0f, 0.2f);
-	
-	bool shouldBeVisible = (camera->GetMode() == CameraMode::ThirdPerson);
-	static_cast<Sprite*>(sonic)->SetVisible(shouldBeVisible);
 
 	isMovingForward = false;
 	isMovingBackward = false;
@@ -223,109 +92,82 @@ void Game::Init()
 	spotLights = std::vector<SpotLight>();
 
 	PointLight redLight;
-	redLight.position = glm::vec3(0.0f, 3.0f, 5.0f); // Posición correcta (arriba del cubo)
-	redLight.color = glm::vec3(1.0f, 0.0f, 0.0f);     // Color rojo (correcto)
-	redLight.intensity = 10.0f;                       // Intensidad alta (puede ser excesiva)
-	redLight.constant = 1.0f;                         // Parámetros de atenuación estándar
+	redLight.position = glm::vec3(-5.0f, 3.0f, 5.0f); 
+	redLight.color = glm::vec3(1.0f, 0.0f, 0.0f);    
+	redLight.intensity = 100.0f;                       
+	redLight.constant = 1.0f;                        
 	redLight.linear = 0.09f;
 	redLight.quadratic = 0.032f;
 
 	pointLights.push_back(redLight);
+	
+	PointLight brownLight;
+	brownLight.position = glm::vec3(5.0f, 3.0f, 5.0f); 
+	brownLight.color = glm::vec3(0.36f, 0.25f, 0.20f);
+	brownLight.intensity = 100.0f;                       
+	brownLight.constant = 1.0f;                         
+	brownLight.linear = 0.09f;
+	brownLight.quadratic = 0.032f;
+
+	pointLights.push_back(brownLight);
 
 	DirectionalLight sunLight;
 	sunLight.direction = glm::vec3(-0.2f, -1.0f, -0.3f);
 	sunLight.color = glm::vec3(1.0f);
-	sunLight.intensity = 1.0f;
+	sunLight.intensity = 5000.0f;
 	directionalLights.push_back(sunLight);
 
 	SpotLight spot;
 	spot.position = glm::vec3(0.0f, 4.0f, 3.0f);
-	spot.direction = glm::vec3(0.0f, -1.0f, -1.0f);  // Apunta hacia abajo y hacia adelante
-	spot.color = glm::vec3(1.0f, 1.0f, 1.0f);
-	spot.cutOff = 12.5f;
-	spot.outerCutOff = 17.5f;
+	spot.direction = glm::vec3(0.0f, -1.0f, -1.0f);  // Pointing down and center
+	spot.color = glm::vec3(0.0f, 1.0f, 0.0f);
+	spot.cutOff = 15.0f;
+	spot.outerCutOff = 25.0f;
 	spot.constant = 1.0f;
 	spot.linear = 0.09f;
 	spot.quadratic = 0.032f;
+	spot.intensity = 100.0f;
 	spotLights.push_back(spot);
 
+
+	SpotLight spot2;
+	spot2.position = glm::vec3(0.0f, 4.0f, 10.0f);
+	spot2.direction = glm::vec3(0.0f, -1.0f, -1.0f);  
+	spot2.color = glm::vec3(0.0f, 0.0f, 1.0f);
+	spot2.cutOff = 15.0f;
+	spot2.outerCutOff = 25.0f;
+	spot2.constant = 1.0f;
+	spot2.linear = 0.09f;
+	spot2.quadratic = 0.032f;
+	spot2.intensity = 100.0f;
+	spotLights.push_back(spot2);
+
+
 	goldMaterial = Material(
-		glm::vec3(0.24725f, 0.1995f, 0.0745f),    // ambient
-		glm::vec3(0.75164f, 0.60648f, 0.22648f),  // diffuse
-		glm::vec3(0.628281f, 0.555802f, 0.366065f), // specular
-		51.2f                                     // shininess
+		glm::vec3(0.24725f, 0.1995f, 0.0745f),   
+		glm::vec3(0.75164f, 0.60648f, 0.22648f),  
+		glm::vec3(0.628281f, 0.555802f, 0.366065f), 
+		51.2f                                     
+	);
+
+	defaultDiffuse = Material(
+		glm::vec3(0.5f, 0.5f, 0.5f),  
+		glm::vec3(0.8f, 0.8f, 0.8f),  
+		glm::vec3(0.0f, 0.0f, 0.0f),  
+		1.0f                          
 	);
 
 	cube->SetMaterial(goldMaterial);
+	floor->SetMaterial(defaultDiffuse);
 
 }
 
 void Game::DeInit()
 {
-	if (sonic != nullptr)
-	{
-		delete sonic;
-		sonic = nullptr;
-	}
-
-	if (cartel != nullptr)
-	{
-		delete cartel;
-		cartel = nullptr;
-	}
-
-	if (frontWall != nullptr)
-	{
-		delete frontWall;
-		frontWall = nullptr;
-	}
-	
 	if (floor != nullptr)
 	{
 		delete floor;
 		floor = nullptr;
-	}
-	
-	if (sideWall1 != nullptr)
-	{
-		delete sideWall1;
-		sideWall1 = nullptr;
-	}
-	
-	if (sideWall2 != nullptr)
-	{
-		delete sideWall2;
-		sideWall2 = nullptr;
-	}
-
-	if (sonicIdleAnim != nullptr)
-	{
-		delete sonicIdleAnim;
-		sonicIdleAnim = nullptr;
-	}
-
-	if (sonicRunAnim != nullptr)
-	{
-		delete sonicIdleAnim;
-		sonicIdleAnim = nullptr;
-	}
-
-	if (cartelAnim != nullptr)
-	{
-		delete sonicIdleAnim;
-		sonicIdleAnim = nullptr;
-	}
-
-	if (square1 != nullptr)
-	{
-		delete square1;
-		square1 = nullptr;
-	}
-
-	if (square2 != nullptr)
-	{
-		delete square2;
-		square2 = nullptr;
 	}
 
 	if (cube != nullptr)
@@ -391,7 +233,6 @@ void Game::UpdateInput()
 	// Camera mode (TAB)
 	if (IsKeyJustReleased(GLFW_KEY_TAB)) {
 		camera->ToggleMode();
-		static_cast<Sprite*>(sonic)->SetVisible(!static_cast<Sprite*>(sonic)->IsVisible());
 
 		if (camera->GetMode() == CameraMode::FirstPerson) {
 			camera->SetPitch(0.0f);
@@ -491,9 +332,6 @@ void Game::RenderScene()
 	Window* myWindow = static_cast<Window*>(window);
 
 	cube->GetMesh()->Render(camera, cube->GetMaterial(), directionalLights, pointLights, spotLights);
+	floor->GetMesh()->Render(camera, floor->GetMaterial(), directionalLights, pointLights, spotLights);
 
-	static_cast<Sprite*>(frontWall)->Draw(camera->GetViewMatrix(), camera->GetProjectionMatrix(myWindow));
-	static_cast<Sprite*>(sideWall1)->Draw(camera->GetViewMatrix(), camera->GetProjectionMatrix(myWindow));
-	static_cast<Sprite*>(sideWall2)->Draw(camera->GetViewMatrix(), camera->GetProjectionMatrix(myWindow));
-	static_cast<Sprite*>(floor)->Draw(camera->GetViewMatrix(), camera->GetProjectionMatrix(myWindow));
 }

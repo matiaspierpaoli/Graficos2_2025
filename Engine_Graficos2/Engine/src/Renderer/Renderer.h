@@ -9,6 +9,7 @@
 #include "VertexArray.h"
 #include "Material/Material.h"
 #include "Light/Light.h"
+#include <unordered_map>
 
 class Renderer
 {
@@ -32,6 +33,9 @@ private:
 	const int MAX_POINT_LIGHTS = 4;
 	const int MAX_SPOT_LIGHTS = 2;
 
+	std::unordered_map<std::string, unsigned int> textureCache;
+
+
 public:
 	Renderer(Window* window);
 	~Renderer();
@@ -51,7 +55,8 @@ public:
 		glm::vec3 camPos,
 		std::vector<DirectionalLight> activeDirLights,
 		std::vector<PointLight> activePointLights,
-		std::vector<SpotLight> activeSpotLights);
+		std::vector<SpotLight> activeSpotLights,
+		unsigned int diffuseTextureID = 0);
 
 	void SetSpriteShaderActive();
 	void SetLightingShaderActive();
@@ -75,6 +80,8 @@ public:
 	void BindSprite(unsigned int slot, unsigned int spriteID);
 	void UnbindSprite();
 	void SetUniversalSpriteSettings();
+
+	unsigned int LoadTexture(const std::string& path);
 
 	void AddDirectionalLight(const DirectionalLight& light);
 	void AddPointLight(const PointLight& light);

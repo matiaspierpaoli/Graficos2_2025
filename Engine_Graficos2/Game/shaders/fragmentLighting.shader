@@ -51,8 +51,19 @@ uniform vec3 materialDiffuse;
 uniform vec3 materialSpecular;
 uniform float materialShininess;
 
+in vec2 TexCoords;
+uniform sampler2D diffuseTexture;
+uniform bool useTexture;
+
 void main()
 {
+    vec3 texColor = texture(diffuseTexture, TexCoords).rgb;
+    vec3 finalDiffuse = materialDiffuse;
+    
+    if (useTexture) {
+        finalDiffuse *= texColor;
+    }
+
     vec3 norm = normalize(Normal);
     vec3 viewDir = normalize(viewPos - FragPos);
 
@@ -71,7 +82,7 @@ void main()
 
         vec3 ambientPoint = 0.1 * pointLights[i].color * materialAmbient;
         float diffPoint = max(dot(norm, lightDir), 0.0);
-        vec3 diffusePoint = diffPoint * pointLights[i].color * materialDiffuse;
+        vec3 diffusePoint = diffPoint * pointLights[i].color * finalDiffuse;
         float specPoint = pow(max(dot(viewDir, reflectDir), 0.0), materialShininess);
         vec3 specularPoint = specPoint * pointLights[i].color * materialSpecular;
 
@@ -84,7 +95,7 @@ void main()
 
     vec3 ambientDir = 0.1 * dirLight.color * materialAmbient;
     float diffDir = max(dot(norm, dir), 0.0);
-    vec3 diffuseDir = diffDir * dirLight.color * materialDiffuse;
+    vec3 diffuseDir = diffDir * dirLight.color * finalDiffuse;
     float specDir = pow(max(dot(viewDir, reflectDirDir), 0.0), materialShininess);
     vec3 specularDir = specDir * dirLight.color * materialSpecular;
 
@@ -110,7 +121,7 @@ void main()
 
         vec3 ambientSpot = 0.1 * spotLights[i].color * materialAmbient;
         float diffSpot = max(dot(norm, spotDir), 0.0);
-        vec3 diffuseSpot = diffSpot * spotLights[i].color * materialDiffuse;
+        vec3 diffuseSpot = diffSpot * spotLights[i].color * finalDiffuse;
         float specSpot = pow(max(dot(viewDir, reflectDirSpot), 0.0), materialShininess);
         vec3 specularSpot = specSpot * spotLights[i].color * materialSpecular;
 

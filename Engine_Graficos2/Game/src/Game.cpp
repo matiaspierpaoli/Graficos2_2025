@@ -144,10 +144,11 @@ void Game::Init()
 
 
 	goldMaterial = Material(
-		glm::vec3(0.24725f, 0.1995f, 0.0745f),   
+		glm::vec3(1.0f),   
 		glm::vec3(0.75164f, 0.60648f, 0.22648f),  
 		glm::vec3(0.628281f, 0.555802f, 0.366065f), 
-		51.2f                                     
+		51.2f,
+		"res/gold.jpg"
 	);
 
 	defaultDiffuse = Material(

@@ -257,6 +257,7 @@ xcopy "$(ProjectDir)shaders" "$(SolutionDir)Game\shaders" /e /s /y /r /i
     <ClCompile Include="src\Entity\Entity3D\Entity3D.cpp" />
     <ClCompile Include="src\Input\InputManager.cpp" />
     <ClCompile Include="src\Light\Light.cpp" />
+    <ClCompile Include="src\Material\Material.cpp" />
     <ClCompile Include="src\Mesh\CubeMesh\CubeMesh.cpp" />
     <ClCompile Include="src\Mesh\Mesh.cpp" />
     <ClCompile Include="src\Program\Program.cpp" />

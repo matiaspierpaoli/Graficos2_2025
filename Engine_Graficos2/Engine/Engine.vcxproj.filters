@@ -117,6 +117,9 @@
     <Filter Include="Archivos de encabezado\Light">
       <UniqueIdentifier>{7c4b6c68-6ea1-4fbe-b36a-4d5d5066c558}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Archivos de origen\Material">
+      <UniqueIdentifier>{ae731560-0fba-444e-b8c2-d3163eeeeabe}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\fragmentShader.shader">
@@ -314,6 +317,9 @@
     </ClCompile>
     <ClCompile Include="src\Light\Light.cpp">
       <Filter>Archivos de encabezado\Light</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Material\Material.cpp">
+      <Filter>Archivos de origen\Material</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

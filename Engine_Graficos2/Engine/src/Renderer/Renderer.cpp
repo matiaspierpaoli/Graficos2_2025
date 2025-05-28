@@ -131,7 +131,8 @@ void Renderer::DrawWithLighting(
 	glm::vec3 camPos,
 	std::vector<DirectionalLight> activeDirLights,
 	std::vector<PointLight> activePointLights,
-	std::vector<SpotLight> activeSpotLights
+	std::vector<SpotLight> activeSpotLights,
+	unsigned int diffuseTextureID
 )
 {
 	VertexBuffer* vb = vertexBuffers[vertexBuffer];
@@ -203,6 +204,16 @@ void Renderer::DrawWithLighting(
 		}
 	}
 
+	if (material.useTexture) {
+		BindSprite(0, material.diffuseTexture);
+		lightingProgram->SetUniform1i("diffuseTexture", 0);
+		lightingProgram->SetUniform1i("useTexture", 1); // Textura activada
+	}
+	else {
+		lightingProgram->SetUniform1i("useTexture", 0); // Textura desactivada
+	}
+
+
 	// Camera
 	lightingProgram->SetUniform3f("viewPos", camPos.x, camPos.y, camPos.z);
 
@@ -247,6 +258,7 @@ unsigned int Renderer::GetNewVertexBuffer(const void* data, unsigned int size, b
 	{
 		layout.Push<float>(3); // Position 3D
 		layout.Push<float>(3); // normal
+		layout.Push<float>(2); // UV
 	}
 	else
 	{
@@ -359,18 +371,41 @@ void Renderer::SetUniversalSpriteSettings()
 {
 	//https://docs.gl/gl4/glTexParameteri
 	///SET MIPMAPPING //vaRS
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
 	///SET WRAPPING //vaRS
 	//Repeat: repeats image in empty space
 	//Mirror Repeat: repeats image, but mirroring it
 	//Clamp Border: stretches image to edge of screen
 	//Clamp Edge: fills empty space left by image with color
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
 	//Enable blending, so images with transparency can be draw
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+}
+
+unsigned int Renderer::LoadTexture(const std::string& path)
+{
+	if (textureCache.find(path) != textureCache.end()) {
+		return textureCache[path];
+	}
+
+	int width, height, bpp;
+	unsigned int textureID;
+	GetNewSprite(path, &width, &height, &bpp, &textureID);
+
+	if (textureID == 0) {
+		std::cerr << "ERROR: No se pudo cargar la textura en: " << path << std::endl;
+	}
+	else {
+		std::cout << "Textura cargada correctamente: " << path
+			<< " (ID: " << textureID << ")" << std::endl;
+	}
+
+
+	textureCache[path] = textureID;
+	return textureID;
 }

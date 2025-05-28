@@ -162,6 +162,7 @@ void Renderer::DrawWithLighting(
 		std::string prefix = "dirLight.";
 		lightingProgram->SetUniform3f(prefix + "direction", light.direction.x, light.direction.y, light.direction.z);
 		lightingProgram->SetUniform3f(prefix + "color", light.color.r, light.color.g, light.color.b);
+		lightingProgram->SetUniform1f(prefix + "intensity", light.intensity);
 	}
 	
 	// Point lights
@@ -176,6 +177,7 @@ void Renderer::DrawWithLighting(
 			std::string prefix = "pointLights[" + std::to_string(i) + "].";
 			lightingProgram->SetUniform3f(prefix + "position", light.position.x, light.position.y, light.position.z);
 			lightingProgram->SetUniform3f(prefix + "color", light.color.r, light.color.g, light.color.b);
+			lightingProgram->SetUniform1f(prefix + "intensity", light.intensity);
 			lightingProgram->SetUniform1f(prefix + "constant", light.constant);
 			lightingProgram->SetUniform1f(prefix + "linear", light.linear);
 			lightingProgram->SetUniform1f(prefix + "quadratic", light.quadratic);
@@ -196,6 +198,7 @@ void Renderer::DrawWithLighting(
 			lightingProgram->SetUniform3f(prefix + "position", spot.position.x, spot.position.y, spot.position.z);
 			lightingProgram->SetUniform3f(prefix + "direction", spot.direction.x, spot.direction.y, spot.direction.z);
 			lightingProgram->SetUniform3f(prefix + "color", spot.color.r, spot.color.g, spot.color.b);
+			lightingProgram->SetUniform1f(prefix + "intensity", spot.intensity);
 			lightingProgram->SetUniform1f(prefix + "cutOff", glm::cos(glm::radians(spot.cutOff)));
 			lightingProgram->SetUniform1f(prefix + "outerCutOff", glm::cos(glm::radians(spot.outerCutOff)));
 			lightingProgram->SetUniform1f(prefix + "constant", spot.constant);

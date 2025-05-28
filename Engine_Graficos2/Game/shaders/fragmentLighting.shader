@@ -80,24 +80,27 @@ void main()
         float distance = length(pointLights[i].position - FragPos);
         float attenuation = 1.0 / (pointLights[i].constant + pointLights[i].linear * distance + pointLights[i].quadratic * (distance * distance));
 
-        vec3 ambientPoint = 0.1 * pointLights[i].color * materialAmbient;
+        vec3 lightColorIntensity = pointLights[i].color * pointLights[i].intensity;
+
+        vec3 ambientPoint = 0.1 * lightColorIntensity * materialAmbient;
         float diffPoint = max(dot(norm, lightDir), 0.0);
-        vec3 diffusePoint = diffPoint * pointLights[i].color * finalDiffuse;
+        vec3 diffusePoint = diffPoint * lightColorIntensity * finalDiffuse;
         float specPoint = pow(max(dot(viewDir, reflectDir), 0.0), materialShininess);
-        vec3 specularPoint = specPoint * pointLights[i].color * materialSpecular;
+        vec3 specularPoint = specPoint * lightColorIntensity * materialSpecular;
 
         pointResult += (ambientPoint + diffusePoint + specularPoint) * attenuation;
     }
 
     // ----------- Directional Light -------------
+    vec3 lightColorDir = dirLight.color * dirLight.intensity;
     vec3 dir = normalize(-dirLight.direction);
     vec3 reflectDirDir = reflect(-dir, norm);
 
-    vec3 ambientDir = 0.1 * dirLight.color * materialAmbient;
+    vec3 ambientDir = 0.1 * lightColorDir * materialAmbient;
     float diffDir = max(dot(norm, dir), 0.0);
-    vec3 diffuseDir = diffDir * dirLight.color * finalDiffuse;
+    vec3 diffuseDir = diffDir * lightColorDir * finalDiffuse;
     float specDir = pow(max(dot(viewDir, reflectDirDir), 0.0), materialShininess);
-    vec3 specularDir = specDir * dirLight.color * materialSpecular;
+    vec3 specularDir = specDir * lightColorDir * materialSpecular;
 
     vec3 dirResult = ambientDir + diffuseDir + specularDir;
 
@@ -119,11 +122,13 @@ void main()
 
         vec3 reflectDirSpot = reflect(-spotDir, norm);
 
-        vec3 ambientSpot = 0.1 * spotLights[i].color * materialAmbient;
+        vec3 lightColorSpot = spotLights[i].color * spotLights[i].intensity;
+
+        vec3 ambientSpot = 0.1 * lightColorSpot * materialAmbient;
         float diffSpot = max(dot(norm, spotDir), 0.0);
-        vec3 diffuseSpot = diffSpot * spotLights[i].color * finalDiffuse;
+        vec3 diffuseSpot = diffSpot * lightColorSpot * finalDiffuse;
         float specSpot = pow(max(dot(viewDir, reflectDirSpot), 0.0), materialShininess);
-        vec3 specularSpot = specSpot * spotLights[i].color * materialSpecular;
+        vec3 specularSpot = specSpot * lightColorSpot * materialSpecular;
 
         spotResult += (ambientSpot + diffuseSpot + specularSpot) * attenuationSpot * intensity;
     }

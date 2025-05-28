@@ -94,7 +94,7 @@ void Game::Init()
 	PointLight redLight;
 	redLight.position = glm::vec3(-5.0f, 3.0f, 5.0f); 
 	redLight.color = glm::vec3(1.0f, 0.0f, 0.0f);    
-	redLight.intensity = 100.0f;                       
+	redLight.intensity = 1.0f;                       
 	redLight.constant = 1.0f;                        
 	redLight.linear = 0.09f;
 	redLight.quadratic = 0.032f;
@@ -104,7 +104,7 @@ void Game::Init()
 	PointLight brownLight;
 	brownLight.position = glm::vec3(5.0f, 3.0f, 5.0f); 
 	brownLight.color = glm::vec3(0.36f, 0.25f, 0.20f);
-	brownLight.intensity = 100.0f;                       
+	brownLight.intensity = 1.0f;                       
 	brownLight.constant = 1.0f;                         
 	brownLight.linear = 0.09f;
 	brownLight.quadratic = 0.032f;
@@ -114,7 +114,7 @@ void Game::Init()
 	DirectionalLight sunLight;
 	sunLight.direction = glm::vec3(-0.2f, -1.0f, -0.3f);
 	sunLight.color = glm::vec3(1.0f);
-	sunLight.intensity = 5000.0f;
+	sunLight.intensity = 0.3f;
 	directionalLights.push_back(sunLight);
 
 	SpotLight spot;
@@ -126,7 +126,7 @@ void Game::Init()
 	spot.constant = 1.0f;
 	spot.linear = 0.09f;
 	spot.quadratic = 0.032f;
-	spot.intensity = 100.0f;
+	spot.intensity = 1.0f;
 	spotLights.push_back(spot);
 
 
@@ -139,7 +139,7 @@ void Game::Init()
 	spot2.constant = 1.0f;
 	spot2.linear = 0.09f;
 	spot2.quadratic = 0.032f;
-	spot2.intensity = 100.0f;
+	spot2.intensity = 1.0f;
 	spotLights.push_back(spot2);
 
 

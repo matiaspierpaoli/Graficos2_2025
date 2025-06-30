@@ -120,6 +120,18 @@
     <Filter Include="Archivos de origen\Material">
       <UniqueIdentifier>{ae731560-0fba-444e-b8c2-d3163eeeeabe}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Archivos de encabezado\ModelImporter">
+      <UniqueIdentifier>{3d5463c2-9004-4ee1-9b81-50c77c641e76}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Archivos de origen\ModelImporter">
+      <UniqueIdentifier>{86ee99df-ebe0-432d-9b44-c0662c693385}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Archivos de encabezado\Mesh\MeshIndexed">
+      <UniqueIdentifier>{a38b4e91-cc59-4446-9613-94ea8fd61543}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Archivos de origen\Mesh\MeshIndexed">
+      <UniqueIdentifier>{4571dc8e-5ac9-401e-a8ce-325a320b89f5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\fragmentShader.shader">
@@ -241,6 +253,12 @@
     <ClInclude Include="src\Material\Material.h">
       <Filter>Archivos de encabezado\Material</Filter>
     </ClInclude>
+    <ClInclude Include="src\ModelImporter\ModelImporter.h">
+      <Filter>Archivos de encabezado\ModelImporter</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Mesh\IndexedMesh\MeshIndexed.h">
+      <Filter>Archivos de encabezado\Mesh\MeshIndexed</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Window\Window.cpp">
@@ -320,6 +338,12 @@
     </ClCompile>
     <ClCompile Include="src\Material\Material.cpp">
       <Filter>Archivos de origen\Material</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ModelImporter\ModelImporter.cpp">
+      <Filter>Archivos de origen\ModelImporter</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Mesh\IndexedMesh\MeshIndexed.cpp">
+      <Filter>Archivos de origen\Mesh\MeshIndexed</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

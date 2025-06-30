@@ -2,6 +2,7 @@
 #include <iostream>
 #include <../libs/glfw/include/GLFW/glfw3.h>
 #include <VectorUtils.h>
+#include <Modelimporter/ModelImporter.h>
 
 #pragma region keyCodes
 
@@ -150,6 +151,22 @@ void Game::Init()
 		51.2f,
 		"res/gold.jpg"
 	);
+	
+	mettalicMaterial = Material(
+		glm::vec3(0.3f),   
+		glm::vec3(0.6f),  
+		glm::vec3(0.9f), 
+		64.0f,
+		"res/mettalic.jpg"
+	);
+	
+	simpleMaterial = Material(
+		glm::vec3(1.0f),   
+		glm::vec3(1.0f),  
+		glm::vec3(1.0f), 
+		32.0f,
+		""
+	);
 
 	defaultDiffuse = Material(
 		glm::vec3(0.5f, 0.5f, 0.5f),  
@@ -161,6 +178,10 @@ void Game::Init()
 	cube->SetMaterial(goldMaterial);
 	floor->SetMaterial(defaultDiffuse);
 
+
+	LoadModel("res/models/suzanne.obj", goldMaterial, entities, glm::vec3(0.0f, 2.0f, -10.0f));
+	LoadModel("res/models/model.dae", goldMaterial, entities, glm::vec3(1.0f), glm::vec3(0.1f));
+	LoadModel("res/models/Buidling 2_2.fbx", simpleMaterial, entities, glm::vec3(1.0f), glm::vec3(-0.9f));
 }
 
 void Game::DeInit()
@@ -183,6 +204,18 @@ void Game::DeInit()
 			cubeFaces[i] = nullptr;
 		}
 	}
+
+	pointLights.clear();
+	directionalLights.clear();
+	spotLights.clear();
+
+	for (int i = 0; i < entities.size(); i++)
+	{
+		if (entities[i] != nullptr)
+			entities[i] = nullptr;
+	}
+
+	entities.clear();
 	
 	if (camera != nullptr)
 	{
@@ -267,27 +300,26 @@ void Game::UpdatePlayer()
 			moveDir = glm::normalize(moveDir);
 
 		glm::vec3 movement = moveDir * defaultTranslation.x * time->GetDeltaTime();
-		cube->Translate(movement.x, movement.y, movement.z);
+		entities[1]->Translate(movement.x, movement.y, movement.z);
 	}
 
 	// Rotation
 	if (glm::length(rotationVectorPlayer1) > 0.01f) {
 		float rotationAmount = defaultRotation * time->GetDeltaTime();
-		cube->RotateX(rotationVectorPlayer1.x * rotationAmount);
-		cube->RotateY(rotationVectorPlayer1.y * rotationAmount);
-		cube->RotateZ(rotationVectorPlayer1.z * rotationAmount);
+		entities[1]->RotateX(rotationVectorPlayer1.x * rotationAmount);
+		entities[1]->RotateY(rotationVectorPlayer1.y * rotationAmount);
+		entities[1]->RotateZ(rotationVectorPlayer1.z * rotationAmount);
 	}
 
 	// Scale
 	if (scaleVectorPlayer1 != 0) {
 		float scaleAmount = scaleVectorPlayer1 * defaultScale.x * time->GetDeltaTime();
-		cube->Scale(scaleAmount, scaleAmount, scaleAmount);
+		entities[1]->Scale(scaleAmount, scaleAmount, scaleAmount);
 	}
 
-	cube->UpdateModel(true);
+	entities[0]->UpdateModel(true);
+	entities[1]->UpdateModel(true);
 }
-
-
 
 void Game::UpdateCamera()
 {
@@ -301,11 +333,11 @@ void Game::UpdateCamera()
 		{
 			float deltaX = GetMouseDeltaX();
 			float deltaY = GetMouseDeltaY();
-			camera->FollowTarget(cube->GetTranslation(), deltaX, deltaY, true);
+			camera->FollowTarget(entities[1]->GetTranslation(), deltaX, deltaY, true);
 		}
 		else
 		{
-			camera->FollowTarget(cube->GetTranslation(), 0, 0, false);
+			camera->FollowTarget(entities[1]->GetTranslation(), 0, 0, false);
 		}
 	}
 	else
@@ -315,7 +347,7 @@ void Game::UpdateCamera()
 
 		camera->SetLookTarget(camera->GetPosition() + camera->CalculateDirection());
 
-		camera->SetPosition(ToGLM(cube->GetTranslation()) + glm::vec3(0, 1.5f, 0));
+		camera->SetPosition(ToGLM(entities[1]->GetTranslation()) + glm::vec3(0, 1.5f, 0));
 
 		camera->SetPitch(glm::clamp(camera->GetPitch(), -89.0f, 89.0f));
 	}
@@ -323,7 +355,7 @@ void Game::UpdateCamera()
 
 void Game::UpdateScene()
 {
-	//static_cast<Sprite*>(cartel)->UpdateFrame(0);
+
 }
 
 void Game::RenderScene()
@@ -332,7 +364,32 @@ void Game::RenderScene()
 
 	Window* myWindow = static_cast<Window*>(window);
 
-	cube->GetMesh()->Render(camera, cube->GetMaterial(), directionalLights, pointLights, spotLights);
+	//cube->GetMesh()->Render(camera, cube->GetMaterial(), directionalLights, pointLights, spotLights);
 	floor->GetMesh()->Render(camera, floor->GetMaterial(), directionalLights, pointLights, spotLights);
 
+	for (auto& entity : entities) {
+		entity->GetMesh()->Render(camera, entity->GetMaterial(),
+			directionalLights, pointLights, spotLights);
+	}
+}
+
+void Game::LoadModel(const std::string& path,
+	const Material& material,
+	std::vector<Entity3D*>& entities,
+	const glm::vec3& position,
+	const glm::vec3& scale)
+{
+	Mesh* importedMesh = ModelImporter::LoadMesh(path);
+
+	if (importedMesh == nullptr) {
+		std::cout << "ERROR: Could not load model" << std::endl;
+	}
+	else {
+		Entity3D* modelEntity = new Entity3D();
+		modelEntity->SetMesh(importedMesh);
+		modelEntity->SetMaterial(material);
+		modelEntity->Translate(position.x, position.y, position.z);
+		modelEntity->Scale(scale.x, scale.y, scale.z);
+		entities.push_back(modelEntity);
+	}
 }

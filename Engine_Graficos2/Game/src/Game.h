@@ -18,12 +18,16 @@ private:
 	Entity3D* floor;
 	Entity3D* cube;
 	Sprite* cubeFaces[6];
+	std::vector<Entity3D*> entities;
 
 	std::vector<DirectionalLight> directionalLights;
 	std::vector<PointLight> pointLights;
 	std::vector<SpotLight> spotLights;
 
+
 	Material goldMaterial;
+	Material mettalicMaterial;
+	Material simpleMaterial;
 	Material defaultDiffuse;
 
 	float traslateX;
@@ -58,6 +62,13 @@ private:
 	void UpdateCamera();
 	void UpdateScene();
 	void RenderScene();
+	void LoadModel(
+		const std::string& path,
+		const Material& material,
+		std::vector<Entity3D*>& entities,
+		const glm::vec3& position = glm::vec3(1.0f),
+		const glm::vec3& scale = glm::vec3(0.0f)
+	);
 
 public:
 	Game();

@@ -226,7 +226,9 @@ xcopy "$(ProjectDir)shaders" "$(SolutionDir)Game\shaders" /e /s /y /r /i
     <ClInclude Include="src\Light\Light.h" />
     <ClInclude Include="src\Material\Material.h" />
     <ClInclude Include="src\Mesh\CubeMesh\CubeMesh.h" />
+    <ClInclude Include="src\Mesh\IndexedMesh\MeshIndexed.h" />
     <ClInclude Include="src\Mesh\Mesh.h" />
+    <ClInclude Include="src\ModelImporter\ModelImporter.h" />
     <ClInclude Include="src\Program\Program.h" />
     <ClInclude Include="src\RendererSingleton.h" />
     <ClInclude Include="src\Renderer\Renderer.h" />
@@ -259,7 +261,9 @@ xcopy "$(ProjectDir)shaders" "$(SolutionDir)Game\shaders" /e /s /y /r /i
     <ClCompile Include="src\Light\Light.cpp" />
     <ClCompile Include="src\Material\Material.cpp" />
     <ClCompile Include="src\Mesh\CubeMesh\CubeMesh.cpp" />
+    <ClCompile Include="src\Mesh\IndexedMesh\MeshIndexed.cpp" />
     <ClCompile Include="src\Mesh\Mesh.cpp" />
+    <ClCompile Include="src\ModelImporter\ModelImporter.cpp" />
     <ClCompile Include="src\Program\Program.cpp" />
     <ClCompile Include="src\Renderer\Renderer.cpp" />
     <ClCompile Include="src\Sprite\Sprite.cpp" />

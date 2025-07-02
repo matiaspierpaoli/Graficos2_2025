@@ -49,17 +49,17 @@ static MeshIndexed* processMesh(aiMesh* mesh,
             verts.push_back(0.0f);
         }
 
-        if (i == 0) {
-            std::cout << "UV0[0]=("
-                << mesh->mTextureCoords[0][0].x << ","
-                << mesh->mTextureCoords[0][0].y << ")\n";
-        }
-        // y si tienes channel 1:
-        if (mesh->mNumUVComponents[1] && i == 0) {
-            std::cout << "UV1[0]=("
-                << mesh->mTextureCoords[1][0].x << ","
-                << mesh->mTextureCoords[1][0].y << ")\n";
-        }
+        //if (i == 0) {
+        //    std::cout << "UV0[0]=("
+        //        << mesh->mTextureCoords[0][0].x << ","
+        //        << mesh->mTextureCoords[0][0].y << ")\n";
+        //}
+        //// y si tienes channel 1:
+        //if (mesh->mNumUVComponents[1] && i == 0) {
+        //    std::cout << "UV1[0]=("
+        //        << mesh->mTextureCoords[1][0].x << ","
+        //        << mesh->mTextureCoords[1][0].y << ")\n";
+        //}
     }
 
     // 2) Índices
@@ -108,25 +108,23 @@ static MeshIndexed* processMesh(aiMesh* mesh,
             );
         }
 
-        aiString str;
-        unsigned int cntD = aiMat->GetTextureCount(aiTextureType_DIFFUSE);
-        unsigned int cntB = aiMat->GetTextureCount(aiTextureType_BASE_COLOR);
-        std::cout << "Mesh «" << mesh->mName.C_Str()
-            << "» matIndex=" << mesh->mMaterialIndex
-            << " diffuse=" << cntD
-            << " baseColor=" << cntB;
+        //aiString str;
+        //unsigned int cntD = aiMat->GetTextureCount(aiTextureType_DIFFUSE);
+        //unsigned int cntB = aiMat->GetTextureCount(aiTextureType_BASE_COLOR);
+        //std::cout << "Mesh «" << mesh->mName.C_Str()
+        //    << "» matIndex=" << mesh->mMaterialIndex
+        //    << " diffuse=" << cntD
+        //    << " baseColor=" << cntB;
 
-        aiTextureType pick = (cntD > 0 ? aiTextureType_DIFFUSE : aiTextureType_BASE_COLOR);
-        if (aiMat->GetTextureCount(pick) > 0) {
-            aiMat->GetTexture(pick, 0, &str);
-            std::cout << " -> cargando «" << str.C_Str() << "»\n";
-        }
-        else {
-            std::cout << " -> sin textura, usar placeholder\n";
-        }
+        //aiTextureType pick = (cntD > 0 ? aiTextureType_DIFFUSE : aiTextureType_BASE_COLOR);
+        //if (aiMat->GetTextureCount(pick) > 0) {
+        //    aiMat->GetTexture(pick, 0, &str);
+        //    std::cout << " -> cargando «" << str.C_Str() << "»\n";
+        //}
+        //else {
+        //    std::cout << " -> sin textura, usar placeholder\n";
+        //}
     }
-
-
 
     m->SetMaterial(mat);
     return m;

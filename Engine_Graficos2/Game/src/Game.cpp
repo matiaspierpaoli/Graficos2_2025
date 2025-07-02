@@ -99,7 +99,7 @@ void Game::Init()
 	pointLights.push_back(brownLight);
 
 	DirectionalLight sunLight;
-	sunLight.direction = glm::vec3(-0.2f, -1.0f, 0.1f);
+	sunLight.direction = glm::vec3(0.0f, -0.8f, -0.6f);
 	sunLight.color = glm::vec3(1.0f, 0.95f, 0.9f);
 	sunLight.intensity = 0.8f;
 	directionalLights.push_back(sunLight);
@@ -164,7 +164,65 @@ void Game::Init()
 	backpack->SetMaterialToMeshes();
 	entities.push_back(backpack);
 
-	LoadModel("res/models/suzanne.obj", floorMat, entities, glm::vec3(0.0f, 2.0f, -5.0f), glm::vec3(0.5f));
+	meshes = ModelImporter::LoadModel("res/models/jet/jet.glb");
+
+	Material jetMat(
+		glm::vec3(0.1f),                     // ambient
+		glm::vec3(1.0f),                     // diffuse tint
+		glm::vec3(0.5f),                     // specular
+		32.0f,                               // shininess
+		""// ruta al base color
+	);
+
+	jet = new Entity3D();
+	jet->Translate(10, -2, 10);
+	jet->Scale(2.0f, 2.0f, 2.0f);
+	jet->SetMaterial(jetMat);
+	for (auto* m : meshes) {
+		jet->AddMesh(m);
+	}
+	jet->SetMaterialToMeshes();
+	entities.push_back(jet);
+	
+	meshes = ModelImporter::LoadModel("res/models/football/Ball.obj");
+
+	Material footballMatBlack(
+		glm::vec3(0.1f),                     // ambient
+		glm::vec3(1.0f),                     // diffuse tint
+		glm::vec3(0.5f),                     // specular
+		32.0f,                               // shininess
+		"res/models/football/Ball_Black_s_BaseColor.png"// ruta al base color
+	);
+
+	Material footballMatWhite(
+		glm::vec3(0.1f),                     // ambient
+		glm::vec3(1.0f),                     // diffuse tint
+		glm::vec3(0.5f),                     // specular
+		32.0f,                               // shininess
+		"res/models/football/Ball_White_s_BaseColor.png"// ruta al base color
+	);
+
+	football = new Entity3D();
+	football->Translate(-5, 0.0f, -5);
+	football->Scale(1.0f, 1.0f, 1.0f);
+	for (size_t i = 0; i < meshes.size(); ++i) {
+		auto* m = meshes[i];
+		football->AddMesh(m);
+		 if (i == 0)   m->SetMaterial(footballMatWhite);
+		 else if (i == 1)        m->SetMaterial(footballMatBlack);
+	}
+
+	entities.push_back(football);
+
+	Material goldMat(
+		glm::vec3(0.24725f, 0.1995f, 0.0745f),  // ambient
+		glm::vec3(0.75164f, 0.60648f, 0.22648f), // diffuse tint
+		glm::vec3(0.628281f, 0.555802f, 0.366065f), // specular
+		150.2f,                               // shininess
+		"res/textures/gold_albedo.jpg"
+	);
+
+	LoadModel("res/models/suzanne.obj", goldMat, entities, glm::vec3(0.0f, 2.0f, -5.0f), glm::vec3(0.5f));
 
 	/*LoadModel("res/models/suzanne.obj", goldMaterial, entities, glm::vec3(0.0f, 2.0f, -10.0f));
 	LoadModel("res/models/model.dae", goldMaterial, entities, glm::vec3(1.0f), glm::vec3(0.1f));
@@ -189,6 +247,18 @@ void Game::DeInit()
 	{
 		delete backpack;
 		backpack = nullptr;
+	}
+	
+	if (jet != nullptr)
+	{
+		delete jet;
+		jet = nullptr;
+	}
+	
+	if (football != nullptr)
+	{
+		delete football;
+		football = nullptr;
 	}
 	
 	for (int i = 0; i < 6; i++) {
@@ -306,7 +376,7 @@ void Game::UpdatePlayer()
 
 	// Scale
 	if (scaleVectorPlayer1 != 0) {
-		float scaleAmount = scaleVectorPlayer1 * defaultScale.x * time->GetDeltaTime();
+		float scaleAmount = 1.0f + scaleVectorPlayer1 * defaultScale.x * time->GetDeltaTime();
 		entities[1]->Scale(scaleAmount, scaleAmount, scaleAmount);
 	}
 

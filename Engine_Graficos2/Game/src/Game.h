@@ -18,6 +18,8 @@ private:
 	Entity3D* floor;
 	Entity3D* cube;
 	Entity3D* backpack;
+	Entity3D* jet;
+	Entity3D* football;
 	Sprite* cubeFaces[6];
 	std::vector<Entity3D*> entities;
 

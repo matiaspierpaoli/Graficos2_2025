@@ -22,6 +22,7 @@ private:
 	Entity3D* football;
 	Sprite* cubeFaces[6];
 	std::vector<Entity3D*> entities;
+	size_t selectedEntity;
 
 	std::vector<DirectionalLight> directionalLights;
 	std::vector<PointLight> pointLights;

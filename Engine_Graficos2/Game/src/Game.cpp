@@ -88,23 +88,24 @@ void Game::Init()
 
 	pointLights.push_back(redLight);
 	
-	PointLight brownLight;
-	brownLight.position = glm::vec3(5.0f, 3.0f, 5.0f); 
-	brownLight.color = glm::vec3(0.36f, 0.25f, 0.20f);
-	brownLight.intensity = 1.0f;                       
-	brownLight.constant = 1.0f;                         
-	brownLight.linear = 0.09f;
-	brownLight.quadratic = 0.032f;
+	PointLight violetLight;
+	violetLight.position = glm::vec3(10.0f, 3.0f, 5.0f);
+	//brownLight.color = glm::vec3(0.36f, 0.25f, 0.20f);
+	violetLight.color = glm::vec3(0.7f, 0.0f, 1.0f);
+	violetLight.intensity = 0.7f;
+	violetLight.constant = 1.0f;
+	violetLight.linear = 0.09f;
+	violetLight.quadratic = 0.032f;
 
-	pointLights.push_back(brownLight);
+	pointLights.push_back(violetLight);
 
 	DirectionalLight sunLight;
-	sunLight.direction = glm::vec3(0.0f, -0.8f, -0.6f);
+	sunLight.direction = glm::vec3(-0.2f, -1.0f, -0.3f);
 	sunLight.color = glm::vec3(1.0f, 0.95f, 0.9f);
 	sunLight.intensity = 0.8f;
 	directionalLights.push_back(sunLight);
 
-	SpotLight spot;
+	SpotLight spot; // Blue
 	spot.position = glm::vec3(0.0f, 4.0f, 3.0f);
 	spot.direction = glm::vec3(0.0f, -1.0f, -1.0f);  // Pointing down and center
 	spot.color = glm::vec3(0.0f, 1.0f, 0.0f);
@@ -117,7 +118,7 @@ void Game::Init()
 	spotLights.push_back(spot);
 
 
-	SpotLight spot2;
+	SpotLight spot2; // Green
 	spot2.position = glm::vec3(0.0f, 4.0f, 10.0f);
 	spot2.direction = glm::vec3(0.0f, -1.0f, -1.0f);  
 	spot2.color = glm::vec3(0.0f, 0.0f, 1.0f);
@@ -144,6 +145,36 @@ void Game::Init()
 	floor->Scale(50, 2, 50);
 	entities.push_back(floor);
 
+	auto meshes = ModelImporter::LoadModel("res/models/football/Ball.obj");
+
+	Material footballMatBlack(
+		glm::vec3(0.1f),                     // ambient
+		glm::vec3(1.0f),                     // diffuse tint
+		glm::vec3(0.5f),                     // specular
+		32.0f,                               // shininess
+		"res/models/football/Ball_Black_s_BaseColor.png"// ruta al base color
+	);
+
+	Material footballMatWhite(
+		glm::vec3(0.1f),                     // ambient
+		glm::vec3(1.0f),                     // diffuse tint
+		glm::vec3(0.5f),                     // specular
+		32.0f,                               // shininess
+		"res/models/football/Ball_White_s_BaseColor.png"// ruta al base color
+	);
+
+	football = new Entity3D();
+	football->Translate(-5, 0.0f, -5);
+	football->Scale(1.0f, 1.0f, 1.0f);
+	for (size_t i = 0; i < meshes.size(); ++i) {
+		auto* m = meshes[i];
+		football->AddMesh(m);
+		 if (i == 0)   m->SetMaterial(footballMatWhite);
+		 else if (i == 1)        m->SetMaterial(footballMatBlack);
+	}
+
+	entities.push_back(football);
+
 	Material backpackMat(
 		glm::vec3(0.1f),                     // ambient
 		glm::vec3(1.0f),                     // diffuse tint
@@ -152,7 +183,7 @@ void Game::Init()
 		"res/models/backpack/1001_albedo.jpg"// ruta al base color
 	);
 
-	auto meshes = ModelImporter::LoadModel("res/models/backpack/Survival_BackPack_2.fbx");
+	meshes = ModelImporter::LoadModel("res/models/backpack/Survival_BackPack_2.fbx");
 
 	backpack = new Entity3D();
 	backpack->Translate(0, 0, 0);
@@ -184,42 +215,13 @@ void Game::Init()
 	jet->SetMaterialToMeshes();
 	entities.push_back(jet);
 	
-	meshes = ModelImporter::LoadModel("res/models/football/Ball.obj");
-
-	Material footballMatBlack(
-		glm::vec3(0.1f),                     // ambient
-		glm::vec3(1.0f),                     // diffuse tint
-		glm::vec3(0.5f),                     // specular
-		32.0f,                               // shininess
-		"res/models/football/Ball_Black_s_BaseColor.png"// ruta al base color
-	);
-
-	Material footballMatWhite(
-		glm::vec3(0.1f),                     // ambient
-		glm::vec3(1.0f),                     // diffuse tint
-		glm::vec3(0.5f),                     // specular
-		32.0f,                               // shininess
-		"res/models/football/Ball_White_s_BaseColor.png"// ruta al base color
-	);
-
-	football = new Entity3D();
-	football->Translate(-5, 0.0f, -5);
-	football->Scale(1.0f, 1.0f, 1.0f);
-	for (size_t i = 0; i < meshes.size(); ++i) {
-		auto* m = meshes[i];
-		football->AddMesh(m);
-		 if (i == 0)   m->SetMaterial(footballMatWhite);
-		 else if (i == 1)        m->SetMaterial(footballMatBlack);
-	}
-
-	entities.push_back(football);
 
 	Material goldMat(
-		glm::vec3(0.24725f, 0.1995f, 0.0745f),  // ambient
+		glm::vec3(1.0f),  // ambient
 		glm::vec3(0.75164f, 0.60648f, 0.22648f), // diffuse tint
 		glm::vec3(0.628281f, 0.555802f, 0.366065f), // specular
-		150.2f,                               // shininess
-		"res/textures/gold_albedo.jpg"
+		51.2f,                               // shininess
+		"res/gold.jpg"
 	);
 
 	LoadModel("res/models/suzanne.obj", goldMat, entities, glm::vec3(0.0f, 2.0f, -5.0f), glm::vec3(0.5f));
@@ -227,6 +229,8 @@ void Game::Init()
 	/*LoadModel("res/models/suzanne.obj", goldMaterial, entities, glm::vec3(0.0f, 2.0f, -10.0f));
 	LoadModel("res/models/model.dae", goldMaterial, entities, glm::vec3(1.0f), glm::vec3(0.1f));
 	LoadModel("res/models/Buidling 2_2.fbx", simpleMaterial, entities, glm::vec3(1.0f), glm::vec3(-0.9f));*/
+
+	selectedEntity = 1;
 }
 
 void Game::DeInit()
@@ -330,58 +334,95 @@ void Game::UpdateInput()
 	// Camera mode (TAB)
 	if (IsKeyJustReleased(GLFW_KEY_TAB)) {
 		camera->ToggleMode();
-
-		if (camera->GetMode() == CameraMode::FirstPerson) {
-			camera->SetPitch(0.0f);
-			glm::vec3 direction;
-			direction.x = cos(glm::radians(camera->GetYaw())) * cos(glm::radians(camera->GetPitch()));
-			direction.y = sin(glm::radians(camera->GetPitch()));
-			direction.z = sin(glm::radians(camera->GetYaw())) * cos(glm::radians(camera->GetPitch()));
-			direction = glm::normalize(direction);
-			camera->SetLookTarget(camera->GetPosition() + direction);
+		if (camera->GetMode() == CameraMode::ThirdPerson) {
+			// regresa al offset TP
+			camera->FollowTarget(entities[selectedEntity]->GetTranslation(), 0, 0, false);
 		}
 		else {
-			camera->SetPitch(15.0f);
+			// al cambiar a FP, ubica la cámara en la cabeza
+			glm::vec3 headPos = ToGLM(entities[selectedEntity]->GetTranslation()) + glm::vec3(0, 1.5f, 0);
+			camera->SetPosition(headPos);
+			// y fija el lookTarget hacia delante
+			glm::vec3 forward = camera->CalculateDirection();
+			camera->SetLookTarget(headPos + forward);
+			camera->SetPitch(0.0f); // o el valor que prefieras
 		}
+	}
+
+	if (IsKeyJustReleased(GLFW_KEY_N)) {
+		selectedEntity++;
+		if (selectedEntity >= entities.size())
+			selectedEntity = 1;
+		std::cout << "Entidad activa: " << selectedEntity << "\n";
+	}
+	if (IsKeyJustReleased(GLFW_KEY_B)) {
+		if (selectedEntity <= 1)
+			selectedEntity = entities.size() - 1;
+		else
+			selectedEntity--;
+		std::cout << "Entidad activa: " << selectedEntity << "\n";
 	}
 }
 
 void Game::UpdatePlayer()
 {
-	// Movement
-	if (glm::length(moveVectorPlayer1) > 0.01f) {
-		glm::vec3 forward = camera->GetForward();
-		forward.y = 0;
-		forward = glm::normalize(forward);
+	if (camera->GetMode() == CameraMode::ThirdPerson)
+	{
+		// Movement
+		if (glm::length(moveVectorPlayer1) > 0.01f) {
+			glm::vec3 forward = camera->GetForward();
+			forward.y = 0;
+			forward = glm::normalize(forward);
 
+			glm::vec3 right = glm::normalize(glm::cross(forward, glm::vec3(0, 1, 0)));
+			glm::vec3 up = glm::vec3(0, 1, 0);
+
+			glm::vec3 moveDir = moveVectorPlayer1.x * right + moveVectorPlayer1.y * forward + moveVectorPlayer1.z * up;
+
+			if (glm::length(moveDir) > 0.01f)
+				moveDir = glm::normalize(moveDir);
+
+			glm::vec3 movement = moveDir * defaultTranslation.x * time->GetDeltaTime();
+			entities[selectedEntity]->Translate(movement.x, movement.y, movement.z);
+		}
+
+		// Rotation
+		if (glm::length(rotationVectorPlayer1) > 0.01f) {
+			float rotationAmount = defaultRotation * time->GetDeltaTime();
+			entities[selectedEntity]->RotateX(rotationVectorPlayer1.x * rotationAmount);
+			entities[selectedEntity]->RotateY(rotationVectorPlayer1.y * rotationAmount);
+			entities[selectedEntity]->RotateZ(rotationVectorPlayer1.z * rotationAmount);
+		}
+
+		// Scale
+		if (scaleVectorPlayer1 != 0) {
+			float scaleAmount = 1.0f + scaleVectorPlayer1 * defaultScale.x * time->GetDeltaTime();
+			entities[selectedEntity]->Scale(scaleAmount, scaleAmount, scaleAmount);
+		}
+	}
+	else // FirstPerson
+	{
+		// 1) Calcula ejes de la cámara
+		glm::vec3 camPos = camera->GetPosition();
+		glm::vec3 forward = camera->CalculateDirection();        // hacia donde mira
 		glm::vec3 right = glm::normalize(glm::cross(forward, glm::vec3(0, 1, 0)));
 		glm::vec3 up = glm::vec3(0, 1, 0);
 
-		glm::vec3 moveDir = moveVectorPlayer1.x * right + moveVectorPlayer1.y * forward + moveVectorPlayer1.z * up;
+		// 2) Construye el desplazamiento a partir de moveVectorPlayer1
+		//    (en UpdateInput rawInput.x = izquierda/derecha, rawInput.y = adelante/atrás, rawInput.z = arriba/abajo)
+		glm::vec3 movement =
+			moveVectorPlayer1.x * right * defaultTranslation.x * time->GetDeltaTime() +
+			moveVectorPlayer1.y * forward * defaultTranslation.y * time->GetDeltaTime() +
+			moveVectorPlayer1.z * up * defaultTranslation.z * time->GetDeltaTime();
 
-		if (glm::length(moveDir) > 0.01f)
-			moveDir = glm::normalize(moveDir);
-
-		glm::vec3 movement = moveDir * defaultTranslation.x * time->GetDeltaTime();
-		entities[1]->Translate(movement.x, movement.y, movement.z);
+		// 3) Aplica al camera.position
+		camera->SetPosition(camPos + movement);
 	}
 
-	// Rotation
-	if (glm::length(rotationVectorPlayer1) > 0.01f) {
-		float rotationAmount = defaultRotation * time->GetDeltaTime();
-		entities[1]->RotateX(rotationVectorPlayer1.x * rotationAmount);
-		entities[1]->RotateY(rotationVectorPlayer1.y * rotationAmount);
-		entities[1]->RotateZ(rotationVectorPlayer1.z * rotationAmount);
+	for (int i = 0; i < entities.size(); i++)
+	{
+		entities[i]->UpdateModel(true);
 	}
-
-	// Scale
-	if (scaleVectorPlayer1 != 0) {
-		float scaleAmount = 1.0f + scaleVectorPlayer1 * defaultScale.x * time->GetDeltaTime();
-		entities[1]->Scale(scaleAmount, scaleAmount, scaleAmount);
-	}
-
-	entities[0]->UpdateModel(true);
-	entities[1]->UpdateModel(true);
 }
 
 void Game::UpdateCamera()
@@ -396,11 +437,11 @@ void Game::UpdateCamera()
 		{
 			float deltaX = GetMouseDeltaX();
 			float deltaY = GetMouseDeltaY();
-			camera->FollowTarget(entities[1]->GetTranslation(), deltaX, deltaY, true);
+			camera->FollowTarget(entities[selectedEntity]->GetTranslation(), deltaX, deltaY, true);
 		}
 		else
 		{
-			camera->FollowTarget(entities[1]->GetTranslation(), 0, 0, false);
+			camera->FollowTarget(entities[selectedEntity]->GetTranslation(), 0, 0, false);
 		}
 	}
 	else
@@ -408,11 +449,9 @@ void Game::UpdateCamera()
 		if (rightHeld)
 			camera->UpdateFirstPersonView(GetMouseDeltaX(), GetMouseDeltaY());
 
-		camera->SetLookTarget(camera->GetPosition() + camera->CalculateDirection());
-
-		camera->SetPosition(ToGLM(entities[1]->GetTranslation()) + glm::vec3(0, 1.5f, 0));
-
-		camera->SetPitch(glm::clamp(camera->GetPitch(), -89.0f, 89.0f));
+		// Mantenemos el lookTarget a partir de la propia orientación
+		glm::vec3 dir = camera->CalculateDirection();
+		camera->SetLookTarget(camera->GetPosition() + dir);
 	}
 }
 

@@ -13,7 +13,10 @@ public:
     CubeMesh(Sprite* faces[6]);
     ~CubeMesh();
 
-    void Render(Camera* camera, Material cubeMaterial, std::vector<DirectionalLight> activeDirLights, std::vector<PointLight> activePointLights, std::vector<SpotLight> activeSpotLights) override;
+    void Render(Camera* camera,
+        const std::vector<DirectionalLight>& dirLights,
+        const std::vector<PointLight>& pointLights,
+        const std::vector<SpotLight>& spotLights) override;
 
 private:
     void SetupMesh();

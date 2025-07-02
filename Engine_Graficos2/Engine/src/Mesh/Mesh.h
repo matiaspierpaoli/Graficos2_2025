@@ -1,6 +1,5 @@
 #pragma once
 #include "Exports.h"
-#include <../libs/glm/glm.hpp>
 #include <vector>
 #include "Camera/Camera.h"
 #include "Material/Material.h"
@@ -11,6 +10,7 @@ protected:
     unsigned int* vBuffer;
     unsigned int* iBuffer;
     unsigned int modelId;
+    Material material;
 
 public:
     Mesh();
@@ -20,7 +20,13 @@ public:
     unsigned int GetIndexBuffer() const { return *iBuffer; }
     unsigned int GetModelId() const { return modelId; }
 
+    void SetMaterial(const Material& m) { material = m; }
+    const Material& GetMaterial() const { return material; }
+
     void SetModelId(unsigned int id) { modelId = id; }
 
-    virtual void Render(class Camera* camera, Material cubeMaterial, std::vector<DirectionalLight> activeDirLights, std::vector<PointLight> activePointLights, std::vector<SpotLight> activeSpotLights) = 0;
+    virtual void Render(Camera* camera,
+        const std::vector<DirectionalLight>& dirLights,
+        const std::vector<PointLight>& pointLights,
+        const std::vector<SpotLight>& spotLights) = 0;
 };

@@ -80,7 +80,10 @@ void CubeMesh::SetupMesh()
     *iBuffer = RendererSingleton::GetRenderer()->GetNewIndexBuffer(indices, 36);
 }
 
-void CubeMesh::Render(Camera* camera, Material cubeMaterial, std::vector<DirectionalLight> activeDirLights, std::vector<PointLight> activePointLights, std::vector<SpotLight> activeSpotLights) {
+void CubeMesh::Render(Camera* camera,
+    const std::vector<DirectionalLight>& dirLights,
+    const std::vector<PointLight>& pointLights,
+    const std::vector<SpotLight>& spotLights) {
     Renderer* renderer = RendererSingleton::GetRenderer();
     renderer->SetLightingShaderActive();
 
@@ -95,10 +98,10 @@ void CubeMesh::Render(Camera* camera, Material cubeMaterial, std::vector<Directi
         modelId,
         view,
         proj,
-        cubeMaterial,
+        material,
         camera->GetPosition(),
-        activeDirLights,
-        activePointLights,
-        activeSpotLights
+        dirLights,
+        pointLights,
+        spotLights
     );
 }

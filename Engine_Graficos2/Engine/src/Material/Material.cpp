@@ -7,6 +7,6 @@ Material::Material(const glm::vec3& amb, const glm::vec3& diff, const glm::vec3&
 {
     if (!texturePath.empty()) {
         diffuseTexture = RendererSingleton::GetRenderer()->LoadTexture(texturePath);
-        useTexture = true;
+        useTexture = (diffuseTexture != 0);
     }
 }

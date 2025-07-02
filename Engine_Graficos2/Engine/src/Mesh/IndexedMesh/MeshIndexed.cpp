@@ -1,41 +1,36 @@
 #include "MeshIndexed.h"
 #include "RendererSingleton.h"
 
-void MeshIndexed::SetupBuffers(const std::vector<float>& vertices,
-    const std::vector<unsigned int>& indices) {
-
-    *vBuffer = RendererSingleton::GetRenderer()->GetNewVertexBuffer(
-        vertices.data(),
+void MeshIndexed::SetupBuffers(
+    const std::vector<float>& vertices,
+    const std::vector<unsigned int>& indices
+) {
+    auto R = RendererSingleton::GetRenderer();
+    *vBuffer = R->GetNewVertexBuffer(vertices.data(),
         vertices.size() * sizeof(float),
-        true
-    );
-
-    *iBuffer = RendererSingleton::GetRenderer()->GetNewIndexBuffer(
+        true);
+    *iBuffer = R->GetNewIndexBuffer(
         const_cast<unsigned int*>(indices.data()),
-        indices.size()
-    );
-
+        indices.size());
     vertexCount = indices.size();
 }
 
-void MeshIndexed::Render(Camera* camera, Material material,
-    std::vector<DirectionalLight> dirLights,
-    std::vector<PointLight> pointLights,
-    std::vector<SpotLight> spotLights) {
-    
-    Renderer* renderer = RendererSingleton::GetRenderer();
-    renderer->SetLightingShaderActive();
+void MeshIndexed::Render(
+    Camera* camera,
+    const std::vector<DirectionalLight>& dirLights,
+    const std::vector<PointLight>& pointLights,
+    const std::vector<SpotLight>& spotLights
+) {
+    auto R = RendererSingleton::GetRenderer();
+    R->SetLightingShaderActive();
 
-    glm::mat4 view = camera->GetViewMatrix();
-    glm::mat4 proj = camera->GetProjectionMatrix(renderer->GetWindow());
-
-    renderer->DrawWithLighting(
+    R->DrawWithLighting(
         *vBuffer,
         *iBuffer,
-        modelId,
-        view,
-        proj,
-        material,
+        GetModelId(),
+        camera->GetViewMatrix(),
+        camera->GetProjectionMatrix(R->GetWindow()),
+        material,               
         camera->GetPosition(),
         dirLights,
         pointLights,

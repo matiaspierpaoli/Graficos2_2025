@@ -64,20 +64,6 @@ void Game::Init()
 	defaultScale.x = 1.0f;
 	defaultScale.y = 1.0f;
 
-	floor = new Entity3D();
-	floor->SetMesh(new CubeMesh());
-	floor->Translate(0.0f, -3.0f, 5.0f);
-	floor->Scale(50.0f, 2.0f, 50.0f);
-	
-	/*for (int i = 0; i < 6; i++) 
-	{
-		cubeFaces[i] = new Sprite("res/Solid_red.png", 1, Frame(0, 200, 0, 200));
-	}*/
-
-	cube = new Entity3D();
-	cube->SetMesh(new CubeMesh());
-	cube->Translate(0.0f, 0.0f, 5.0f);
-	cube->Scale(1.0f, 1.0f, 1.0f);
 
 	camera = new Camera(CameraMode::ThirdPerson, 5.0f, 0.2f);
 
@@ -143,45 +129,44 @@ void Game::Init()
 	spot2.intensity = 1.0f;
 	spotLights.push_back(spot2);
 
-
-	goldMaterial = Material(
-		glm::vec3(1.0f),   
-		glm::vec3(0.75164f, 0.60648f, 0.22648f),  
-		glm::vec3(0.628281f, 0.555802f, 0.366065f), 
-		51.2f,
-		"res/gold.jpg"
-	);
-	
-	mettalicMaterial = Material(
-		glm::vec3(0.3f),   
-		glm::vec3(0.6f),  
-		glm::vec3(0.9f), 
-		64.0f,
-		"res/mettalic.jpg"
-	);
-	
-	simpleMaterial = Material(
-		glm::vec3(1.0f),   
-		glm::vec3(1.0f),  
-		glm::vec3(1.0f), 
-		32.0f,
+	Material floorMat(
+		glm::vec3(0.1f),                     // ambient
+		glm::vec3(0.8f),                     // diffuse tint
+		glm::vec3(0.2f),                     // specular
+		32.0f,                               // shininess
 		""
 	);
+	
+	floor = new Entity3D();
+	floor->AddMesh(new CubeMesh());
+	floor->SetMaterial(floorMat);
+	floor->Translate(0, -3, 5);
+	floor->Scale(50, 2, 50);
+	entities.push_back(floor);
 
-	defaultDiffuse = Material(
-		glm::vec3(0.5f, 0.5f, 0.5f),  
-		glm::vec3(0.8f, 0.8f, 0.8f),  
-		glm::vec3(0.0f, 0.0f, 0.0f),  
-		1.0f                          
+	Material backpackMat(
+		glm::vec3(0.1f),                     // ambient
+		glm::vec3(1.0f),                     // diffuse tint
+		glm::vec3(0.5f),                     // specular
+		32.0f,                               // shininess
+		"res/models/backpack/1001_albedo.jpg"// ruta al base color
 	);
 
-	cube->SetMaterial(goldMaterial);
-	floor->SetMaterial(defaultDiffuse);
+	auto meshes = ModelImporter::LoadModel("res/models/backpack/Survival_BackPack_2.fbx");
+
+	backpack = new Entity3D();
+	backpack->Translate(0, 0, 0);
+	backpack->Scale(0.01f,0.01f,0.01f);
+	backpack->SetMaterial(backpackMat);
+	for (auto* m : meshes) {
+		backpack->AddMesh(m);
+	}
+	entities.push_back(backpack);
 
 
-	LoadModel("res/models/suzanne.obj", goldMaterial, entities, glm::vec3(0.0f, 2.0f, -10.0f));
+	/*LoadModel("res/models/suzanne.obj", goldMaterial, entities, glm::vec3(0.0f, 2.0f, -10.0f));
 	LoadModel("res/models/model.dae", goldMaterial, entities, glm::vec3(1.0f), glm::vec3(0.1f));
-	LoadModel("res/models/Buidling 2_2.fbx", simpleMaterial, entities, glm::vec3(1.0f), glm::vec3(-0.9f));
+	LoadModel("res/models/Buidling 2_2.fbx", simpleMaterial, entities, glm::vec3(1.0f), glm::vec3(-0.9f));*/
 }
 
 void Game::DeInit()
@@ -196,6 +181,12 @@ void Game::DeInit()
 	{
 		delete cube;
 		cube = nullptr;
+	}
+
+	if (backpack != nullptr)
+	{
+		delete backpack;
+		backpack = nullptr;
 	}
 	
 	for (int i = 0; i < 6; i++) {
@@ -364,32 +355,30 @@ void Game::RenderScene()
 
 	Window* myWindow = static_cast<Window*>(window);
 
-	//cube->GetMesh()->Render(camera, cube->GetMaterial(), directionalLights, pointLights, spotLights);
-	floor->GetMesh()->Render(camera, floor->GetMaterial(), directionalLights, pointLights, spotLights);
+	floor->Render(camera, directionalLights, pointLights, spotLights);
 
 	for (auto& entity : entities) {
-		entity->GetMesh()->Render(camera, entity->GetMaterial(),
-			directionalLights, pointLights, spotLights);
+		entity->Render(camera, directionalLights, pointLights, spotLights);
 	}
 }
 
-void Game::LoadModel(const std::string& path,
-	const Material& material,
-	std::vector<Entity3D*>& entities,
-	const glm::vec3& position,
-	const glm::vec3& scale)
+void Game::LoadModel(
+	const std::string& path,
+	const Material& baseMat,
+	std::vector<Entity3D*>& outEntities,
+	const glm::vec3& pos,
+	const glm::vec3& scl)
 {
-	Mesh* importedMesh = ModelImporter::LoadMesh(path);
+	auto meshes = ModelImporter::LoadModel(path);
 
-	if (importedMesh == nullptr) {
-		std::cout << "ERROR: Could not load model" << std::endl;
+	Entity3D* model = new Entity3D();
+	model->Translate(pos.x, pos.y, pos.z);
+	model->Scale(scl.x, scl.y, scl.z);
+
+	for (auto* mesh : meshes) {
+		mesh->SetMaterial(baseMat);
+		model->AddMesh(mesh);
 	}
-	else {
-		Entity3D* modelEntity = new Entity3D();
-		modelEntity->SetMesh(importedMesh);
-		modelEntity->SetMaterial(material);
-		modelEntity->Translate(position.x, position.y, position.z);
-		modelEntity->Scale(scale.x, scale.y, scale.z);
-		entities.push_back(modelEntity);
-	}
+
+	outEntities.push_back(model);
 }

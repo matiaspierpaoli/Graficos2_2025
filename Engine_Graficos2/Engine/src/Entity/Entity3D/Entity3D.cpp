@@ -25,6 +25,13 @@ void Entity3D::UpdateModel(bool isModelCreated) {
     }
 }
 
+void Entity3D::SetMaterialToMeshes()
+{
+    for (auto* m : meshes) {
+        m->SetMaterial(material);
+    }
+}
+
 void Entity3D::Render(
     Camera* camera,
     const std::vector<DirectionalLight>& dirLights,
@@ -32,7 +39,6 @@ void Entity3D::Render(
     const std::vector<SpotLight>& spotLights
 ) {
     for (auto* m : meshes) {
-        m->SetMaterial(material);
         m->Render(camera, dirLights, pointLights, spotLights);
     }
 }

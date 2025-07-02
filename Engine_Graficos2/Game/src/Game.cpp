@@ -65,7 +65,7 @@ void Game::Init()
 	defaultScale.y = 1.0f;
 
 
-	camera = new Camera(CameraMode::ThirdPerson, 5.0f, 0.2f);
+	camera = new Camera(CameraMode::ThirdPerson, 7.5f, 0.2f);
 
 	isMovingForward = false;
 	isMovingBackward = false;
@@ -99,9 +99,9 @@ void Game::Init()
 	pointLights.push_back(brownLight);
 
 	DirectionalLight sunLight;
-	sunLight.direction = glm::vec3(-0.2f, -1.0f, -0.3f);
-	sunLight.color = glm::vec3(1.0f);
-	sunLight.intensity = 0.3f;
+	sunLight.direction = glm::vec3(-0.2f, -1.0f, 0.1f);
+	sunLight.color = glm::vec3(1.0f, 0.95f, 0.9f);
+	sunLight.intensity = 0.8f;
 	directionalLights.push_back(sunLight);
 
 	SpotLight spot;
@@ -161,8 +161,10 @@ void Game::Init()
 	for (auto* m : meshes) {
 		backpack->AddMesh(m);
 	}
+	backpack->SetMaterialToMeshes();
 	entities.push_back(backpack);
 
+	LoadModel("res/models/suzanne.obj", floorMat, entities, glm::vec3(0.0f, 2.0f, -5.0f), glm::vec3(0.5f));
 
 	/*LoadModel("res/models/suzanne.obj", goldMaterial, entities, glm::vec3(0.0f, 2.0f, -10.0f));
 	LoadModel("res/models/model.dae", goldMaterial, entities, glm::vec3(1.0f), glm::vec3(0.1f));

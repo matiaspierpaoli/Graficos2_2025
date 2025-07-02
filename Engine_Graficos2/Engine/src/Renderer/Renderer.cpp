@@ -62,6 +62,7 @@ void Renderer::ClearScreen()
 {
 	glViewport(0, 0, window->GetWidth(), window->GetHeight());
 
+	glClearColor(0.53f, 0.81f, 0.92f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
@@ -341,7 +342,7 @@ void Renderer::GetNewSprite(std::string imgPath, int* imgWidth, int* imgHeight, 
 	if (!localBuffer) return;
 
 	//https://docs.gl/gl4/glTexImage2D
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, *imgWidth, *imgHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, localBuffer);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_SRGB8_ALPHA8, *imgWidth, *imgHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, localBuffer);
 	glGenerateMipmap(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, 0);
 
@@ -380,10 +381,8 @@ void Renderer::SetUniversalSpriteSettings()
 	///SET WRAPPING //vaRS
 	//Repeat: repeats image in empty space
 	//Mirror Repeat: repeats image, but mirroring it
-	//Clamp Border: stretches image to edge of screen
-	//Clamp Edge: fills empty space left by image with color
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
 	//Enable blending, so images with transparency can be draw
 	glEnable(GL_BLEND);

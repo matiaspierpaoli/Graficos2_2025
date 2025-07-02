@@ -19,6 +19,7 @@ public:
         return meshes.empty() ? nullptr : meshes[0];
     }
 
+    void SetMaterialToMeshes();
     void SetMaterial(const Material& mat) { material = mat; }
     const Material& GetMaterial() const { return material; }
 

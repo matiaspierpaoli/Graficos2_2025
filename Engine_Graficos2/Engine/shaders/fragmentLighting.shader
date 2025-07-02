@@ -96,7 +96,7 @@ void main()
     vec3 dir = normalize(-dirLight.direction);
     vec3 reflectDirDir = reflect(-dir, norm);
 
-    vec3 ambientDir = 0.1 * lightColorDir * materialAmbient;
+    vec3 ambientDir = 0.3 * lightColorDir * materialAmbient;
     float diffDir = max(dot(norm, dir), 0.0);
     vec3 diffuseDir = diffDir * lightColorDir * finalDiffuse;
     float specDir = pow(max(dot(viewDir, reflectDirDir), 0.0), materialShininess);
@@ -138,3 +138,4 @@ void main()
     vec3 result = pointResult + dirResult + spotResult;
     FragColor = vec4(result, 1.0);
 }
+

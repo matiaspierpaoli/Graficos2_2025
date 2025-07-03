@@ -5,12 +5,11 @@ Mesh::Mesh()
 {
     vBuffer = new unsigned int(0);
     iBuffer = new unsigned int(0);
-    modelId = 0; // Se establecerá más tarde por la Entity
+    modelId = 0; 
 }
 
 Mesh::~Mesh()
 {
-    // No eliminamos modelId porque es manejado por Entity
     delete vBuffer;
     delete iBuffer;
 }

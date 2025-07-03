@@ -9,7 +9,6 @@ public:
     MeshIndexed() = default;
     ~MeshIndexed() override = default;
 
-    // buffers: posiciones, normales, UV
     void SetupBuffers(const std::vector<float>& vertices,
         const std::vector<unsigned int>& indices);
 

@@ -62,8 +62,6 @@ void BaseGame::Loop()
     Window* tempWindow = (Window*)window;
     Renderer* tempRenderer = (Renderer*)renderer;
     
-    //Init(); // Call children methods
-
     while (IsRunning())
     {
         time->Update();

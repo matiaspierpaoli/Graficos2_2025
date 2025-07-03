@@ -49,37 +49,29 @@ Game::~Game()
 
 void Game::Init()
 {
-	OnStart(512, 257, "Game");
+	OnStart(1024, 768, "Game");
 
 	traslateX = 0.f;
 	traslateY = 0.f;
 	traslateZ = 0.f;
 	
-	defaultTranslation.x = 1.0f;
-	defaultTranslation.y = 1.0f; 
-	defaultTranslation.z = 1.0f; 
+	defaultTranslation.x = 10.0f;
+	defaultTranslation.y = 10.0f; 
+	defaultTranslation.z = 10.0f; 
 
 	defaultRotation = 100.0f;
 
 	defaultScale.x = 1.0f;
 	defaultScale.y = 1.0f;
 
-
 	camera = new Camera(CameraMode::ThirdPerson, 7.5f, 0.2f);
-
-	isMovingForward = false;
-	isMovingBackward = false;
-	isMovingLeft = false;
-	isMovingRight = false;
-	isMovingNear = false;
-	isMovingFurther = false;
 
 	directionalLights = std::vector<DirectionalLight>();
 	pointLights = std::vector<PointLight>();
 	spotLights = std::vector<SpotLight>();
 
 	PointLight redLight;
-	redLight.position = glm::vec3(-5.0f, 3.0f, 5.0f); 
+	redLight.position = glm::vec3(0.0f, 1.0f, -13.0f); 
 	redLight.color = glm::vec3(1.0f, 0.0f, 0.0f);    
 	redLight.intensity = 1.0f;                       
 	redLight.constant = 1.0f;                        
@@ -89,8 +81,7 @@ void Game::Init()
 	pointLights.push_back(redLight);
 	
 	PointLight violetLight;
-	violetLight.position = glm::vec3(10.0f, 3.0f, 5.0f);
-	//brownLight.color = glm::vec3(0.36f, 0.25f, 0.20f);
+	violetLight.position = glm::vec3(15.0f, 1.0f, -13.0f);
 	violetLight.color = glm::vec3(0.7f, 0.0f, 1.0f);
 	violetLight.intensity = 0.7f;
 	violetLight.constant = 1.0f;
@@ -107,7 +98,7 @@ void Game::Init()
 
 	SpotLight spot; // Blue
 	spot.position = glm::vec3(0.0f, 4.0f, 3.0f);
-	spot.direction = glm::vec3(0.0f, -1.0f, -1.0f);  // Pointing down and center
+	spot.direction = glm::vec3(0.0f, -1.0f, -1.0f);
 	spot.color = glm::vec3(0.0f, 1.0f, 0.0f);
 	spot.cutOff = 15.0f;
 	spot.outerCutOff = 25.0f;
@@ -145,22 +136,30 @@ void Game::Init()
 	floor->Scale(50, 2, 50);
 	entities.push_back(floor);
 
+	wall = new Entity3D();
+	wall->AddMesh(new CubeMesh());
+	wall->SetMaterial(floorMat);
+	wall->Translate(0, -3, -20);
+	wall->RotateX(90);
+	wall->Scale(50, 2, 20);
+	entities.push_back(wall);
+
 	auto meshes = ModelImporter::LoadModel("res/models/football/Ball.obj");
 
 	Material footballMatBlack(
-		glm::vec3(0.1f),                     // ambient
-		glm::vec3(1.0f),                     // diffuse tint
-		glm::vec3(0.5f),                     // specular
-		32.0f,                               // shininess
-		"res/models/football/Ball_Black_s_BaseColor.png"// ruta al base color
+		glm::vec3(0.1f),
+		glm::vec3(1.0f),
+		glm::vec3(0.5f),
+		32.0f,
+		"res/models/football/Ball_Black_s_BaseColor.png"
 	);
 
 	Material footballMatWhite(
-		glm::vec3(0.1f),                     // ambient
-		glm::vec3(1.0f),                     // diffuse tint
-		glm::vec3(0.5f),                     // specular
-		32.0f,                               // shininess
-		"res/models/football/Ball_White_s_BaseColor.png"// ruta al base color
+		glm::vec3(0.1f),
+		glm::vec3(1.0f),
+		glm::vec3(0.5f),
+		32.0f,
+		"res/models/football/Ball_White_s_BaseColor.png"
 	);
 
 	football = new Entity3D();
@@ -176,11 +175,11 @@ void Game::Init()
 	entities.push_back(football);
 
 	Material backpackMat(
-		glm::vec3(0.1f),                     // ambient
-		glm::vec3(1.0f),                     // diffuse tint
-		glm::vec3(0.5f),                     // specular
-		32.0f,                               // shininess
-		"res/models/backpack/1001_albedo.jpg"// ruta al base color
+		glm::vec3(0.1f),
+		glm::vec3(1.0f),
+		glm::vec3(0.5f),
+		32.0f,
+		"res/models/backpack/1001_albedo.jpg"
 	);
 
 	meshes = ModelImporter::LoadModel("res/models/backpack/Survival_BackPack_2.fbx");
@@ -198,11 +197,11 @@ void Game::Init()
 	meshes = ModelImporter::LoadModel("res/models/jet/jet.glb");
 
 	Material jetMat(
-		glm::vec3(0.1f),                     // ambient
-		glm::vec3(1.0f),                     // diffuse tint
-		glm::vec3(0.5f),                     // specular
-		32.0f,                               // shininess
-		""// ruta al base color
+		glm::vec3(0.1f),
+		glm::vec3(1.0f),
+		glm::vec3(0.5f),
+		32.0f,
+		""
 	);
 
 	jet = new Entity3D();
@@ -217,20 +216,16 @@ void Game::Init()
 	
 
 	Material goldMat(
-		glm::vec3(1.0f),  // ambient
-		glm::vec3(0.75164f, 0.60648f, 0.22648f), // diffuse tint
-		glm::vec3(0.628281f, 0.555802f, 0.366065f), // specular
-		51.2f,                               // shininess
+		glm::vec3(1.0f),
+		glm::vec3(0.75164f, 0.60648f, 0.22648f),
+		glm::vec3(0.628281f, 0.555802f, 0.366065f),
+		51.2f,
 		"res/gold.jpg"
 	);
 
 	LoadModel("res/models/suzanne.obj", goldMat, entities, glm::vec3(0.0f, 2.0f, -5.0f), glm::vec3(0.5f));
 
-	/*LoadModel("res/models/suzanne.obj", goldMaterial, entities, glm::vec3(0.0f, 2.0f, -10.0f));
-	LoadModel("res/models/model.dae", goldMaterial, entities, glm::vec3(1.0f), glm::vec3(0.1f));
-	LoadModel("res/models/Buidling 2_2.fbx", simpleMaterial, entities, glm::vec3(1.0f), glm::vec3(-0.9f));*/
-
-	selectedEntity = 1;
+	selectedEntity = 2;
 }
 
 void Game::DeInit()
@@ -239,6 +234,12 @@ void Game::DeInit()
 	{
 		delete floor;
 		floor = nullptr;
+	}
+	
+	if (wall != nullptr)
+	{
+		delete wall;
+		wall = nullptr;
 	}
 
 	if (cube != nullptr)
@@ -335,29 +336,28 @@ void Game::UpdateInput()
 	if (IsKeyJustReleased(GLFW_KEY_TAB)) {
 		camera->ToggleMode();
 		if (camera->GetMode() == CameraMode::ThirdPerson) {
-			// regresa al offset TP
+			// back to offset TP
 			camera->FollowTarget(entities[selectedEntity]->GetTranslation(), 0, 0, false);
 		}
 		else {
-			// al cambiar a FP, ubica la cámara en la cabeza
+			// Upon changing to First Person, places camera above head
 			glm::vec3 headPos = ToGLM(entities[selectedEntity]->GetTranslation()) + glm::vec3(0, 1.5f, 0);
 			camera->SetPosition(headPos);
-			// y fija el lookTarget hacia delante
 			glm::vec3 forward = camera->CalculateDirection();
 			camera->SetLookTarget(headPos + forward);
-			camera->SetPitch(0.0f); // o el valor que prefieras
+			camera->SetPitch(0.0f);
 		}
 	}
 
 	if (IsKeyJustReleased(GLFW_KEY_N)) {
 		selectedEntity++;
 		if (selectedEntity >= entities.size())
-			selectedEntity = 1;
+			selectedEntity = 2;
 		std::cout << "Entidad activa: " << selectedEntity << "\n";
 	}
 	if (IsKeyJustReleased(GLFW_KEY_B)) {
-		if (selectedEntity <= 1)
-			selectedEntity = entities.size() - 1;
+		if (selectedEntity <= 2)
+			selectedEntity = entities.size() - 2;
 		else
 			selectedEntity--;
 		std::cout << "Entidad activa: " << selectedEntity << "\n";
@@ -402,20 +402,16 @@ void Game::UpdatePlayer()
 	}
 	else // FirstPerson
 	{
-		// 1) Calcula ejes de la cámara
 		glm::vec3 camPos = camera->GetPosition();
 		glm::vec3 forward = camera->CalculateDirection();        // hacia donde mira
 		glm::vec3 right = glm::normalize(glm::cross(forward, glm::vec3(0, 1, 0)));
 		glm::vec3 up = glm::vec3(0, 1, 0);
 
-		// 2) Construye el desplazamiento a partir de moveVectorPlayer1
-		//    (en UpdateInput rawInput.x = izquierda/derecha, rawInput.y = adelante/atrás, rawInput.z = arriba/abajo)
 		glm::vec3 movement =
 			moveVectorPlayer1.x * right * defaultTranslation.x * time->GetDeltaTime() +
 			moveVectorPlayer1.y * forward * defaultTranslation.y * time->GetDeltaTime() +
 			moveVectorPlayer1.z * up * defaultTranslation.z * time->GetDeltaTime();
 
-		// 3) Aplica al camera.position
 		camera->SetPosition(camPos + movement);
 	}
 
@@ -449,7 +445,6 @@ void Game::UpdateCamera()
 		if (rightHeld)
 			camera->UpdateFirstPersonView(GetMouseDeltaX(), GetMouseDeltaY());
 
-		// Mantenemos el lookTarget a partir de la propia orientación
 		glm::vec3 dir = camera->CalculateDirection();
 		camera->SetLookTarget(camera->GetPosition() + dir);
 	}
@@ -462,10 +457,6 @@ void Game::UpdateScene()
 
 void Game::RenderScene()
 {
-	glm::mat4 view = camera->GetViewMatrix();
-
-	Window* myWindow = static_cast<Window*>(window);
-
 	floor->Render(camera, directionalLights, pointLights, spotLights);
 
 	for (auto& entity : entities) {

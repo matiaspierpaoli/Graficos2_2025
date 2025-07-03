@@ -16,6 +16,7 @@ private:
 	Camera* camera;
 
 	Entity3D* floor;
+	Entity3D* wall;
 	Entity3D* cube;
 	Entity3D* backpack;
 	Entity3D* jet;
@@ -47,13 +48,6 @@ private:
 	glm::vec3 moveVectorPlayer2;
 	float scaleVectorPlayer1;
 	float scaleVectorPlayer2;
-
-	bool isMovingForward;
-	bool isMovingBackward;
-	bool isMovingLeft;
-	bool isMovingRight;	
-	bool isMovingNear;	
-	bool isMovingFurther;	
 
 	std::vector<Frame> sonicIdleFrames = std::vector<Frame>();
 	std::vector<Frame> sonicRunFrames = std::vector<Frame>();

@@ -16,11 +16,6 @@ Renderer::Renderer(Window* window)
 	lightingProgram = new Program();
 	spriteProgram = new Program();	
 
-	glm::vec3 cameraPos = glm::vec3(0.0f,0.0f,3.0f);
-
-	/*proj = glm::perspective(glm::radians(45.0f), window->GetWidth() / window->GetHeight(), 0.1f, 100.0f);
-	view = glm::lookAt(cameraPos, cameraPos + glm::vec3(0.0f, 0.0f, -1.0f), glm::vec3(0.0f, 1.0f, 0.0f));*/
-
 	//unsigned int shader = program->CreateShader(program->ReadFile("shaders/vertexShader.shader"), program->ReadFile("shaders/fragmentShader.shader"));
 	lightingShaderId = lightingProgram->CreateShader(
 		lightingProgram->ReadFile("shaders/vertexLighting.shader"),
@@ -32,7 +27,6 @@ Renderer::Renderer(Window* window)
 		spriteProgram->ReadFile("shaders/fragmentShaderSprite.shader")
 	);
 
-	// Usar por default el de sprite para UI
 	glUseProgram(spriteShaderId);
 
 	//glGenVertexArrays(1, &vao);
@@ -41,7 +35,6 @@ Renderer::Renderer(Window* window)
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_ALPHA_TEST);
 	glDepthFunc(GL_LESS);
-	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
 	SetUniversalSpriteSettings();
 }
@@ -85,11 +78,6 @@ void Renderer::Draw(unsigned int vertexBuffer, unsigned int indexBuffer, unsigne
 	ib->Bind();
 
 	spriteProgram->SetUniformMat4F("mvp", proj * view * models[modelId]);
-	//program->SetUniform4f("uColor", 1.0f, 0.0f, 0.0f, 1.0f);
-	//glDrawArrays(GL_TRIANGLES, 0, 3);
-
-	//texture->Bind();
-	//program->SetUniform1i("uTexture", 0);
 
 	glDrawElements(GL_TRIANGLES, ib->GetCount(), GL_UNSIGNED_INT, nullptr);
 }
@@ -113,7 +101,6 @@ void Renderer::DrawRange(
 
 	spriteProgram->SetUniformMat4F("mvp", proj * view * models[modelId]);
 
-	// Dibujar solo un rango de índices
 	glDrawElements(
 		GL_TRIANGLES,
 		indexCount,
@@ -144,19 +131,16 @@ void Renderer::DrawWithLighting(
 	va->Bind();
 	ib->Bind();
 
-	// Matrices
 	glm::mat4 model = models[modelId];
 	lightingProgram->SetUniformMat4F("model", model);
 	lightingProgram->SetUniformMat4F("view", view);
 	lightingProgram->SetUniformMat4F("projection", proj);
 
-	// Material
 	lightingProgram->SetUniform3f("materialAmbient", material.ambient.r, material.ambient.g, material.ambient.b);
 	lightingProgram->SetUniform3f("materialDiffuse", material.diffuse.r, material.diffuse.g, material.diffuse.b);
 	lightingProgram->SetUniform3f("materialSpecular", material.specular.r, material.specular.g, material.specular.b);
 	lightingProgram->SetUniform1f("materialShininess", material.shininess);
 
-	// Directional lights
 	if (!activeDirLights.empty()) {
 		const DirectionalLight& light = activeDirLights[0];
 
@@ -166,7 +150,6 @@ void Renderer::DrawWithLighting(
 		lightingProgram->SetUniform1f(prefix + "intensity", light.intensity);
 	}
 	
-	// Point lights
 	lightingProgram->SetUniform1i("numPointLights", std::min(static_cast<int>(activePointLights.size()), MAX_POINT_LIGHTS));
 
 	if (!activePointLights.empty()) {
@@ -186,7 +169,6 @@ void Renderer::DrawWithLighting(
 		
 	}
 
-	// Spot lights
 	lightingProgram->SetUniform1i("numSpotLights", std::min(static_cast<int>(activeSpotLights.size()), MAX_SPOT_LIGHTS));
 
 	if (!activeSpotLights.empty()) {
@@ -211,14 +193,13 @@ void Renderer::DrawWithLighting(
 	if (material.useTexture) {
 		BindSprite(0, material.diffuseTexture);
 		lightingProgram->SetUniform1i("diffuseTexture", 0);
-		lightingProgram->SetUniform1i("useTexture", 1); // Textura activada
+		lightingProgram->SetUniform1i("useTexture", 1);
 	}
 	else {
-		lightingProgram->SetUniform1i("useTexture", 0); // Textura desactivada
+		lightingProgram->SetUniform1i("useTexture", 0);
 	}
 
 
-	// Camera
 	lightingProgram->SetUniform3f("viewPos", camPos.x, camPos.y, camPos.z);
 
 	glDrawElements(GL_TRIANGLES, ib->GetCount(), GL_UNSIGNED_INT, nullptr);
@@ -240,13 +221,13 @@ glm::mat4 Renderer::GetModel(unsigned int modelId) const
 	if (modelId < models.size()) {
 		return models[modelId];
 	}
-	return glm::mat4(1.0f); // Retorna matriz identidad si el ID no es válido
+	return glm::mat4(1.0f);
 }
 
 void Renderer::DeleteModel(unsigned int modelId)
 {
 	if (modelId < models.size()) {
-		models[modelId] = glm::mat4(1.0f); // Reset a matriz identidad
+		models[modelId] = glm::mat4(1.0f);
 	}
 }
 

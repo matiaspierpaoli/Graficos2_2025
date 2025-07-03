@@ -11,7 +11,7 @@ public:
     glm::vec3 specular;
     float shininess;
 
-    unsigned int diffuseTexture = 0; // 0 = sin textura  
+    unsigned int diffuseTexture = 0; 
     bool useTexture = false;
 
     Material(

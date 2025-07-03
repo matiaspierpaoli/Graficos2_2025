@@ -134,7 +134,6 @@ void main()
     }
 
 
-    // Total iluminación
     vec3 result = pointResult + dirResult + spotResult;
     FragColor = vec4(result, 1.0);
 }

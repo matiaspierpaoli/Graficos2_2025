@@ -7,10 +7,8 @@
 struct TransformMatrix {
 	glm::mat4 matrix;
 
-	// Operador de conversión explícito a glm::mat4
 	explicit operator glm::mat4() const { return matrix; }
 
-	// Alternativamente, puedes usar un método explícito:
 	glm::mat4 asGlmMatrix() const { return matrix; }
 };
 
@@ -60,14 +58,6 @@ void Entity::RotateZ(float angle)
 
 	UpdateModel(true);
 }
-
-//void Entity::Scale(float x, float y, float z)
-//{
-//	scale.x = glm::max(0.0f, scale.x + x);
-//	scale.y = glm::max(0.0f, scale.y + y);
-//	scale.z = glm::max(0.0f, scale.z + z);
-//	UpdateModel(true);
-//}
 
 void Entity::Scale(float x, float y, float z)
 {

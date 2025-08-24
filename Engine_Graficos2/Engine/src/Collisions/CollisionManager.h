@@ -1,17 +1,21 @@
 #pragma once
 #include "Exports.h"
 
-#include "Entity/Entity2D/Entity2D.h"
-#include "Window/Window.h"
+#include "Entity/Entity3D/Entity3D.h"
+#include "AABB.h"
+
+#include <../libs/glm/glm.hpp>
 
 class GraficosEngine_API CollisionManager
 {
-private:
-
 public:
-	CollisionManager();
-	~CollisionManager();
+    CollisionManager() = default;
+    ~CollisionManager() = default;
 
-	bool checkEntityToEntityCollision(Entity2D* entity1, Entity2D* entity2);
-	bool checkEntityToWindowCollision(Entity2D* entity, Window* window);
+    static bool IntersectAABB3D(const AABB& a, const AABB& b);
+    static bool IntersectAABB3D(const Entity3D* a, const Entity3D* b);
+
+    static glm::vec3 ComputeMTD(const AABB& a, const AABB& b);
+
+    static void ResolveSimple(Entity3D* a, Entity3D* b);
 };

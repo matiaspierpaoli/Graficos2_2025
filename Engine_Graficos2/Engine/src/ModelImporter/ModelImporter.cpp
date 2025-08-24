@@ -50,6 +50,7 @@ MeshIndexed* ModelImporter::ProcessMesh(aiMesh* mesh, const aiScene* scene, cons
     std::vector<float> verts;
     verts.reserve(mesh->mNumVertices * 8);
 
+    AABB bbox;
     for (unsigned i = 0; i < mesh->mNumVertices; ++i) {
         // position
         verts.push_back(mesh->mVertices[i].x);
@@ -70,6 +71,9 @@ MeshIndexed* ModelImporter::ProcessMesh(aiMesh* mesh, const aiScene* scene, cons
             verts.push_back(0.0f);
             verts.push_back(0.0f);
         }
+
+        glm::vec3 p(mesh->mVertices[i].x, mesh->mVertices[i].y, mesh->mVertices[i].z);
+        bbox.expand(p);
     }
 
     // 2) Build index list from faces
@@ -83,6 +87,7 @@ MeshIndexed* ModelImporter::ProcessMesh(aiMesh* mesh, const aiScene* scene, cons
     // 3) Create the GPU buffers
     MeshIndexed* m = new MeshIndexed();
     m->SetupBuffers(verts, idxs);
+    m->SetLocalAABB(bbox);
 
     // 4) Material
     Material mat(

@@ -22,6 +22,8 @@ protected:
 	Entity* parent;
 	std::vector<Entity*> children;
 
+	bool isStatic = false;
+
 public:
 	Entity();
 	virtual ~Entity();
@@ -35,9 +37,12 @@ public:
 	void RotateZ(float angle);
 	void Scale(float x, float y, float z);
 
+	void SetStatic(bool s);
+
 	Vector3 GetTranslation() const;
 	Vector3 GetRotation() const;
-	Vector3 GetScale()const ;
+	Vector3 GetScale()const;
+	bool IsStatic() const;
 	unsigned int GetModelId() const;
 
 	virtual void UpdateModel(bool isModelCreated);

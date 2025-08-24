@@ -37,3 +37,13 @@ void MeshIndexed::Render(
         spotLights
     );
 }
+
+void MeshIndexed::SetLocalAABB(const AABB& b)
+{
+    localAABB = b;
+}
+
+const AABB& MeshIndexed::GetLocalAABB() const
+{
+    return localAABB;
+}

@@ -134,6 +134,7 @@ void Game::Init()
 	floor->SetMaterial(floorMat);
 	floor->Translate(0, -3, 5);
 	floor->Scale(50, 2, 50);
+	floor->SetStatic(true);
 	entities.push_back(floor);
 
 	wall = new Entity3D();
@@ -142,6 +143,7 @@ void Game::Init()
 	wall->Translate(0, 5, -20);
 	wall->RotateX(90);
 	wall->Scale(50, 2, 20);
+	wall->SetStatic(true);
 	entities.push_back(wall);
 
 	if (auto* ballRoot = LoadModel("res/models/football/Ball.obj",
@@ -176,7 +178,7 @@ void Game::Init()
 	);
 
 	if (auto* backpackRoot = LoadModel("res/models/backpack/Survival_BackPack_2.fbx",
-		{ 0, 0, 0 }, { 0.01f, 0.01f, 0.01f },
+		{ 0, 3, 0 }, { 0.01f, 0.01f, 0.01f },
 		&backpackMat)) {
 		entities.push_back(backpackRoot);
 	}
@@ -452,6 +454,23 @@ void Game::UpdateScene()
 		float d = rightSlideInput * slideSpeed * dt;
 		rightOffset = glm::clamp(rightOffset + d, -maxOffset, maxOffset);
 		wheelsRight->Translate(d, 0.0f, 0.0f);
+	}
+
+	for (size_t i = 0; i < entities.size(); ++i)
+	{
+		auto* a = dynamic_cast<Entity3D*>(entities[i]);
+		if (!a) continue;
+
+		for (size_t j = i + 1; j < entities.size(); ++j)
+		{
+			auto* b = dynamic_cast<Entity3D*>(entities[j]);
+			if (!b) continue;
+
+			if (CollisionManager::IntersectAABB3D(a, b))
+			{
+				CollisionManager::ResolveSimple(a, b);
+			}
+		}
 	}
 }
 

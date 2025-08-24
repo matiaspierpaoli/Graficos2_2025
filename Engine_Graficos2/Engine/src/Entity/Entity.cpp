@@ -67,6 +67,11 @@ void Entity::Scale(float x, float y, float z)
 	UpdateModel(true);
 }
 
+void Entity::SetStatic(bool s)
+{
+	isStatic = s;
+}
+
 Vector3 Entity::GetTranslation() const
 {
 	return translation;
@@ -80,6 +85,11 @@ Vector3 Entity::GetRotation() const
 Vector3 Entity::GetScale() const
 {
 	return scale;
+}
+
+bool Entity::IsStatic() const
+{
+	return isStatic;
 }
 
 unsigned int Entity::GetModelId() const

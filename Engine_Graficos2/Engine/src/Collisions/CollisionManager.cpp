@@ -1,61 +1,60 @@
 #include "CollisionManager.h"
+#include <algorithm>
 
-CollisionManager::CollisionManager()
+bool CollisionManager::IntersectAABB3D(const AABB& a, const AABB& b)
 {
+    if (a.max.x < b.min.x || a.min.x > b.max.x) return false;
+    if (a.max.y < b.min.y || a.min.y > b.max.y) return false;
+    if (a.max.z < b.min.z || a.min.z > b.max.z) return false;
+    return true;
 }
 
-CollisionManager::~CollisionManager()
+bool CollisionManager::IntersectAABB3D(const Entity3D* a, const Entity3D* b)
 {
+    return IntersectAABB3D(a->GetWorldAABB(), b->GetWorldAABB());
 }
 
-bool CollisionManager::checkEntityToEntityCollision(Entity2D* entity1, Entity2D* entity2)
+glm::vec3 CollisionManager::ComputeMTD(const AABB& a, const AABB& b)
 {
-	if (entity1->GetTranslation().x + entity1->GetScale().x / 2 >=  //entity1 right edge past entity2 left
-		entity2->GetTranslation().x - entity2->GetScale().x / 2 &&
-		entity1->GetTranslation().x - entity1->GetScale().x / 2 <=  //e1 left edge past e2 right
-		entity2->GetTranslation().x + entity2->GetScale().x / 2 &&
-		entity1->GetTranslation().y + entity1->GetScale().y / 2 >=  //e1 top edge past e2 bottom
-		entity2->GetTranslation().y - entity2->GetScale().y / 2 &&
-		entity1->GetTranslation().y - entity1->GetScale().y / 2 <=  //e1 bottom edge past e2 top
-		entity2->GetTranslation().y + entity2->GetScale().y / 2)
-	{
-		return true;
-	}
-	else
-	{
-		return false;
-	}
+    float dx1 = b.max.x - a.min.x;
+    float dx2 = a.max.x - b.min.x;
+    float dy1 = b.max.y - a.min.y;
+    float dy2 = a.max.y - b.min.y;
+    float dz1 = b.max.z - a.min.z;
+    float dz2 = a.max.z - b.min.z;
+
+    float px = (dx1 < dx2) ? dx1 : -dx2;
+    float py = (dy1 < dy2) ? dy1 : -dy2;
+    float pz = (dz1 < dz2) ? dz1 : -dz2;
+
+    float ax = std::abs(px), ay = std::abs(py), az = std::abs(pz);
+    if (ax <= ay && ax <= az) return { px, 0.0f, 0.0f };
+    if (ay <= ax && ay <= az) return { 0.0f, py, 0.0f };
+    return { 0.0f, 0.0f, pz };
 }
 
-//bool CollisionManager::checkEntityToWindowCollision(Entity2D* entity, Window* window)
-//{
-//	if (entity->GetTranslation().x - entity->GetScale().x / 2 < 0 ||
-//		entity->GetTranslation().x + entity->GetScale().x / 2 > window->GetWidth() ||
-//		entity->GetTranslation().y - entity->GetScale().y / 2 < 0 ||
-//		entity->GetTranslation().y + entity->GetScale().y / 2 > window->GetHeight())
-//	{
-//		return true;
-//	}
-//	else
-//	{
-//		return false;
-//	}
-//}
-
-bool CollisionManager::checkEntityToWindowCollision(Entity2D* entity, Window* window)
+void CollisionManager::ResolveSimple(Entity3D* a, Entity3D* b)
 {
-	float leftEdge = entity->GetTranslation().x - (entity->GetScale().x / 2);
-	float rightEdge = entity->GetTranslation().x + (entity->GetScale().x / 2);
-	float topEdge = entity->GetTranslation().y - (entity->GetScale().y / 2);
-	float bottomEdge = entity->GetTranslation().y + (entity->GetScale().y / 2);
+    const AABB& A = a->GetWorldAABB();
+    const AABB& B = b->GetWorldAABB();
+    if (!IntersectAABB3D(A, B)) return;
 
-	if (leftEdge >= 0 && rightEdge <= window->GetWidth() &&
-		topEdge >= 0 && bottomEdge <= window->GetHeight())
-	{
-		return false; // No collision with window
-	}
-	else
-	{
-		return true; // Collision with window
-	}
+    glm::vec3 mtd = ComputeMTD(A, B); // get A from B
+
+    if (a->IsStatic() && b->IsStatic()) {
+        return;
+    }
+    else if (a->IsStatic() && !b->IsStatic()) {
+        // Push B the other way
+        b->Translate(-mtd.x, -mtd.y, -mtd.z);
+    }
+    else if (!a->IsStatic() && b->IsStatic()) {
+        // Push A
+        a->Translate(mtd.x, mtd.y, mtd.z);
+    }
+    else {
+        // Half movement to each
+        a->Translate(0.5f * mtd.x, 0.5f * mtd.y, 0.5f * mtd.z);
+        b->Translate(-0.5f * mtd.x, -0.5f * mtd.y, -0.5f * mtd.z);
+    }
 }

@@ -139,81 +139,47 @@ void Game::Init()
 	wall = new Entity3D();
 	wall->AddMesh(new CubeMesh());
 	wall->SetMaterial(floorMat);
-	wall->Translate(0, -3, -20);
+	wall->Translate(0, 5, -20);
 	wall->RotateX(90);
 	wall->Scale(50, 2, 20);
 	entities.push_back(wall);
 
-	auto meshes = ModelImporter::LoadModel("res/models/football/Ball.obj");
+	if (auto* ballRoot = LoadModel("res/models/football/Ball.obj",
+		{ -5, 0, -5 }, { 1,1,1 }, nullptr)) {
+		std::vector<Mesh*> mlist;
+		CollectMeshes(ballRoot, mlist);
 
-	Material footballMatBlack(
-		glm::vec3(0.1f),
-		glm::vec3(1.0f),
-		glm::vec3(0.5f),
-		32.0f,
-		"res/models/football/Ball_Black_s_BaseColor.png"
-	);
+		Material ballWhite(glm::vec3(0.1f), glm::vec3(1.0f),
+			glm::vec3(0.5f), 32.0f,
+			"res/models/football/Ball_White_s_BaseColor.png");
+		Material ballBlack(glm::vec3(0.1f), glm::vec3(1.0f),
+			glm::vec3(0.5f), 32.0f,
+			"res/models/football/Ball_Black_s_BaseColor.png");
 
-	Material footballMatWhite(
-		glm::vec3(0.1f),
-		glm::vec3(1.0f),
-		glm::vec3(0.5f),
-		32.0f,
-		"res/models/football/Ball_White_s_BaseColor.png"
-	);
+		if (mlist.size() >= 2) {
+			mlist[0]->SetMaterial(ballWhite);
+			mlist[1]->SetMaterial(ballBlack);
+		}
+		else {
+			if (!mlist.empty()) mlist[0]->SetMaterial(ballWhite);
+		}
 
-	football = new Entity3D();
-	football->Translate(-5, 0.0f, -5);
-	football->Scale(1.0f, 1.0f, 1.0f);
-	for (size_t i = 0; i < meshes.size(); ++i) {
-		auto* m = meshes[i];
-		football->AddMesh(m);
-		 if (i == 0)   m->SetMaterial(footballMatWhite);
-		 else if (i == 1)        m->SetMaterial(footballMatBlack);
+		entities.push_back(ballRoot);
 	}
 
-	entities.push_back(football);
-
 	Material backpackMat(
-		glm::vec3(0.1f),
+		glm::vec3(0.2f),
 		glm::vec3(1.0f),
 		glm::vec3(0.5f),
 		32.0f,
 		"res/models/backpack/1001_albedo.jpg"
 	);
 
-	meshes = ModelImporter::LoadModel("res/models/backpack/Survival_BackPack_2.fbx");
-
-	backpack = new Entity3D();
-	backpack->Translate(0, 0, 0);
-	backpack->Scale(0.01f,0.01f,0.01f);
-	backpack->SetMaterial(backpackMat);
-	for (auto* m : meshes) {
-		backpack->AddMesh(m);
+	if (auto* backpackRoot = LoadModel("res/models/backpack/Survival_BackPack_2.fbx",
+		{ 0, 0, 0 }, { 0.01f, 0.01f, 0.01f },
+		&backpackMat)) {
+		entities.push_back(backpackRoot);
 	}
-	backpack->SetMaterialToMeshes();
-	entities.push_back(backpack);
-
-	meshes = ModelImporter::LoadModel("res/models/jet/jet.glb");
-
-	Material jetMat(
-		glm::vec3(0.1f),
-		glm::vec3(1.0f),
-		glm::vec3(0.5f),
-		32.0f,
-		""
-	);
-
-	jet = new Entity3D();
-	jet->Translate(10, -2, 10);
-	jet->Scale(2.0f, 2.0f, 2.0f);
-	jet->SetMaterial(jetMat);
-	for (auto* m : meshes) {
-		jet->AddMesh(m);
-	}
-	jet->SetMaterialToMeshes();
-	entities.push_back(jet);
-	
 
 	Material goldMat(
 		glm::vec3(1.0f),
@@ -222,10 +188,38 @@ void Game::Init()
 		51.2f,
 		"res/gold.jpg"
 	);
+	if (auto* suzRoot = LoadModel("res/models/suzanne.obj",
+		{ 0.0f, 2.0f, -5.0f }, { 0.5f, 0.5f, 0.5f }, &goldMat)) {
+		entities.push_back(suzRoot);
+	}
+	
+	Material tankMat(
+		glm::vec3(0.1f),
+		glm::vec3(1.0f),
+		glm::vec3(0.5f),
+		32.0f,             
+		"res/models/tank/uv_albedo.jpg" 
+	);
 
-	LoadModel("res/models/suzanne.obj", goldMat, entities, glm::vec3(0.0f, 2.0f, -5.0f), glm::vec3(0.5f));
+	if (auto* tr = LoadModel("res/models/tank/tank.fbx",
+		{ 0.0f, 0.0f, -10.0f }, { 0.03f, 0.03f, 0.03f }, &tankMat))
+	{
+		tankRoot = tr;
+		entities.push_back(tr);
 
-	selectedEntity = 2;
+		tankTree = {};
+		tankTree.root = tankRoot;
+		IndexTree(tankRoot, tankTree);
+
+		// Tank objects paths -> usefull for assigning entity3d objects by hierarchy name
+		for (auto& kv : tankTree.byPath) std::cout << kv.first << "\n";
+
+		tankTurret = FindByName(tankTree, "Turret");
+		wheelsLeft = FindByName(tankTree, "Wheels_Left");
+		wheelsRight = FindByName(tankTree, "Wheels_Right");
+	}
+
+	selectedEntity = entities.size() - 1;
 }
 
 void Game::DeInit()
@@ -241,38 +235,7 @@ void Game::DeInit()
 		delete wall;
 		wall = nullptr;
 	}
-
-	if (cube != nullptr)
-	{
-		delete cube;
-		cube = nullptr;
-	}
-
-	if (backpack != nullptr)
-	{
-		delete backpack;
-		backpack = nullptr;
-	}
 	
-	if (jet != nullptr)
-	{
-		delete jet;
-		jet = nullptr;
-	}
-	
-	if (football != nullptr)
-	{
-		delete football;
-		football = nullptr;
-	}
-	
-	for (int i = 0; i < 6; i++) {
-		if (cubeFaces[i] != nullptr) {
-			delete cubeFaces[i];
-			cubeFaces[i] = nullptr;
-		}
-	}
-
 	pointLights.clear();
 	directionalLights.clear();
 	spotLights.clear();
@@ -357,11 +320,24 @@ void Game::UpdateInput()
 	}
 	if (IsKeyJustReleased(GLFW_KEY_B)) {
 		if (selectedEntity <= 2)
-			selectedEntity = entities.size() - 2;
+			selectedEntity = entities.size() - 1;
 		else
 			selectedEntity--;
 		std::cout << "Entidad activa: " << selectedEntity << "\n";
 	}
+
+	turretYawInput = 0.0f;
+	leftSlideInput = 0.0f;
+	rightSlideInput = 0.0f;
+
+	if (IsKeyPressed(GLFW_KEY_J)) turretYawInput -= 1.0f;
+	if (IsKeyPressed(GLFW_KEY_L)) turretYawInput += 1.0f;
+
+	if (IsKeyPressed(GLFW_KEY_U)) leftSlideInput += 1.0f;
+	if (IsKeyPressed(GLFW_KEY_O)) leftSlideInput -= 1.0f;
+
+	if (IsKeyPressed(GLFW_KEY_I)) rightSlideInput += 1.0f;
+	if (IsKeyPressed(GLFW_KEY_K)) rightSlideInput -= 1.0f;
 }
 
 void Game::UpdatePlayer()
@@ -452,35 +428,80 @@ void Game::UpdateCamera()
 
 void Game::UpdateScene()
 {
+	const float dt = time->GetDeltaTime();
 
+	if (tankTurret && std::abs(turretYawInput) > 0.001f)
+	{
+		const float yawSpeed = 60.0f; 
+		tankTurret->RotateZ(turretYawInput * yawSpeed * dt);
+	}
+
+	const float slideSpeed = 0.5f;
+	const float maxOffset = 0.15f;
+
+	if (wheelsLeft && std::abs(leftSlideInput) > 0.001f)
+	{
+		float d = leftSlideInput * slideSpeed * dt;
+		leftOffset = glm::clamp(leftOffset + d, -maxOffset, maxOffset);
+		float applied = leftOffset - wheelsLeft->GetTranslation().x; 
+		wheelsLeft->Translate(d, 0.0f, 0.0f);
+	}
+
+	if (wheelsRight && std::abs(rightSlideInput) > 0.001f)
+	{
+		float d = rightSlideInput * slideSpeed * dt;
+		rightOffset = glm::clamp(rightOffset + d, -maxOffset, maxOffset);
+		wheelsRight->Translate(d, 0.0f, 0.0f);
+	}
 }
 
 void Game::RenderScene()
 {
-	floor->Render(camera, directionalLights, pointLights, spotLights);
-
 	for (auto& entity : entities) {
 		entity->Render(camera, directionalLights, pointLights, spotLights);
 	}
 }
 
-void Game::LoadModel(
+Entity3D* Game::LoadModel(
 	const std::string& path,
-	const Material& baseMat,
-	std::vector<Entity3D*>& outEntities,
 	const glm::vec3& pos,
-	const glm::vec3& scl)
+	const glm::vec3& scl,
+	const Material* overrideMat = nullptr)
 {
-	auto meshes = ModelImporter::LoadModel(path);
-
-	Entity3D* model = new Entity3D();
-	model->Translate(pos.x, pos.y, pos.z);
-	model->Scale(scl.x, scl.y, scl.z);
-
-	for (auto* mesh : meshes) {
-		mesh->SetMaterial(baseMat);
-		model->AddMesh(mesh);
+	Entity3D* root = ModelImporter::LoadModelWithHierarchy(path);
+	if (!root) {
+		std::cerr << "ERROR: no se pudo cargar " << path << "\n";
+		return nullptr;
 	}
+	root->Translate(pos.x, pos.y, pos.z);
+	root->Scale(scl.x, scl.y, scl.z);
 
-	outEntities.push_back(model);
+	if (overrideMat) {
+		ApplyMaterialRecursive(root, *overrideMat);
+	}
+	return root;
+}
+
+void Game::ApplyMaterialRecursive(Entity3D* node, const Material& mat) {
+	if (!node) return;
+	node->SetMaterial(mat);
+	node->SetMaterialToMeshes();
+
+	for (auto* child : node->GetChildren()) {
+		if (auto* e3d = dynamic_cast<Entity3D*>(child)) {
+			ApplyMaterialRecursive(e3d, mat);
+		}
+	}
+}
+
+void Game::CollectMeshes(Entity3D* node, std::vector<Mesh*>& out) {
+	if (!node) return;
+
+	for (auto* m : node->GetMeshes())
+		out.push_back(m);
+
+	for (auto* child : node->GetChildren()) {
+		if (auto* e3d = dynamic_cast<Entity3D*>(child))
+			CollectMeshes(e3d, out);
+	}
 }

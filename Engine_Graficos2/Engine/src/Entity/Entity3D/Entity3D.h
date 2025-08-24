@@ -10,16 +10,25 @@ private:
     std::vector<Mesh*> meshes;
     Material material;
 
+    void RenderRecursive(
+        Camera* camera,
+        const std::vector<DirectionalLight>& dirLights,
+        const std::vector<PointLight>& pointLights,
+        const std::vector<SpotLight>& spotLights
+    );
+
 public:
     Entity3D();
-    ~Entity3D();
+    ~Entity3D() override;
 
     void AddMesh(Mesh* m);
     Mesh* GetMesh() const {
         return meshes.empty() ? nullptr : meshes[0];
     }
 
-    void SetMaterialToMeshes();
+    const std::vector<Mesh*>& GetMeshes() const { return meshes; }
+
+    void SetMaterialToMeshes(bool recursive = false);
     void SetMaterial(const Material& mat) { material = mat; }
     const Material& GetMaterial() const { return material; }
 
@@ -30,5 +39,5 @@ public:
         const std::vector<DirectionalLight>& dirLights,
         const std::vector<PointLight>& pointLights,
         const std::vector<SpotLight>& spotLights
-    );
+    )override ;
 };

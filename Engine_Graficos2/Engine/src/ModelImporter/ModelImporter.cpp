@@ -6,41 +6,62 @@
 #include "Material/Material.h"
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <glm/gtx/matrix_decompose.hpp>
+#include <iostream>
 
 // Convert Assimp’s row-major matrix to GLM’s column-major format
 static glm::mat4 AiToGlm(const aiMatrix4x4& a) {
     return glm::transpose(glm::make_mat4(&a.a1));
 }
 
+void ModelImporter::DecomposeMatrix(const glm::mat4& matrix, Vector3& translation,
+    Vector3& rotation, Vector3& scale) {
+    // Usar glm::decompose para extraer transformaciones
+    glm::vec3 glmTranslation, glmScale, skew;
+    glm::quat orientation;
+    glm::vec4 perspective;
+
+    if (glm::decompose(matrix, glmScale, orientation, glmTranslation, skew, perspective)) {
+        translation.x = glmTranslation.x;
+        translation.y = glmTranslation.y;
+        translation.z = glmTranslation.z;
+
+        scale.x = glmScale.x;
+        scale.y = glmScale.y;
+        scale.z = glmScale.z;
+
+        // Convertir quaternion a ángulos de Euler (en grados)
+        glm::vec3 euler = glm::eulerAngles(orientation) * 180.0f / glm::pi<float>();
+        rotation.x = euler.x;
+        rotation.y = euler.y;
+        rotation.z = euler.z;
+    }
+    else {
+        // Si falla, valores por defecto
+        translation = { 0,0,0 };
+        rotation = { 0,0,0 };
+        scale = { 1,1,1 };
+    }
+}
+
 // Build a MeshIndexed from a single aiMesh, applying the given transform
-static MeshIndexed* processMesh(aiMesh* mesh,
-    const aiScene* scene,
-    const std::string& dir,
-    const glm::mat4& transform)
-{
+MeshIndexed* ModelImporter::ProcessMesh(aiMesh* mesh, const aiScene* scene, const std::string& dir) {
     // 1) Gather vertex data (position, normal, UV)
     std::vector<float> verts;
     verts.reserve(mesh->mNumVertices * 8);
 
     for (unsigned i = 0; i < mesh->mNumVertices; ++i) {
-        // apply node transform to vertex position
-        glm::vec4 p{
-            mesh->mVertices[i].x,
-            mesh->mVertices[i].y,
-            mesh->mVertices[i].z,
-            1.0f
-        };
-        glm::vec4 pw = transform * p;
-        verts.push_back(pw.x);
-        verts.push_back(pw.y);
-        verts.push_back(pw.z);
+        // position
+        verts.push_back(mesh->mVertices[i].x);
+        verts.push_back(mesh->mVertices[i].y);
+        verts.push_back(mesh->mVertices[i].z);
 
-        // copy normal
+        // normal
         verts.push_back(mesh->mNormals[i].x);
         verts.push_back(mesh->mNormals[i].y);
         verts.push_back(mesh->mNormals[i].z);
 
-        // copy UV if present, else zero
+        // UV if present, else zero
         if (mesh->mTextureCoords[0]) {
             verts.push_back(mesh->mTextureCoords[0][i].x);
             verts.push_back(mesh->mTextureCoords[0][i].y);
@@ -63,7 +84,7 @@ static MeshIndexed* processMesh(aiMesh* mesh,
     MeshIndexed* m = new MeshIndexed();
     m->SetupBuffers(verts, idxs);
 
-    // 4) Default material (ambient, diffuse, specular, shininess, no texture)
+    // 4) Material
     Material mat(
         glm::vec3(0.1f),
         glm::vec3(1.0f),
@@ -72,7 +93,6 @@ static MeshIndexed* processMesh(aiMesh* mesh,
         ""
     );
 
-    // if the mesh has a material, try to load its diffuse/base_color texture
     if (mesh->mMaterialIndex >= 0) {
         aiMaterial* aiMat = scene->mMaterials[mesh->mMaterialIndex];
 
@@ -93,7 +113,7 @@ static MeshIndexed* processMesh(aiMesh* mesh,
                 glm::vec3(1.0f),
                 glm::vec3(0.5f),
                 32.0f,
-                texPath // set the texture path
+                texPath
             );
         }
     }
@@ -102,32 +122,38 @@ static MeshIndexed* processMesh(aiMesh* mesh,
     return m;
 }
 
-// Recursively traverse scene graph, accumulating node transforms
-static void processNode(aiNode* node,
-    const aiScene* scene,
-    const std::string& dir,
-    std::vector<MeshIndexed*>& meshes,
-    const glm::mat4& parentTransform)
+Entity3D* ModelImporter::ProcessNode(aiNode* node, const aiScene* scene,
+    const std::string& dir, Entity3D* parent)
 {
-    // combine parent transform with this node’s local transform
-    glm::mat4 local = AiToGlm(node->mTransformation);
-    glm::mat4 global = parentTransform * local;
+    Entity3D* entity = new Entity3D();
+    entity->SetName(node->mName.C_Str());
 
-    // process all meshes at this node
+    glm::mat4 glmMat = AiToGlm(node->mTransformation);
+
+    Vector3 t, r, s;
+    DecomposeMatrix(glmMat, t, r, s);
+
+    entity->Translate(t.x, t.y, t.z);
+    entity->RotateX(r.x);
+    entity->RotateY(r.y);
+    entity->RotateZ(r.z);
+    entity->Scale(s.x, s.y, s.z);
+
     for (unsigned i = 0; i < node->mNumMeshes; ++i) {
-        aiMesh* aiM = scene->mMeshes[node->mMeshes[i]];
-        meshes.push_back(processMesh(aiM, scene, dir, global));
+        aiMesh* aimesh = scene->mMeshes[node->mMeshes[i]];
+        MeshIndexed* m = ProcessMesh(aimesh, scene, dir);
+        entity->AddMesh(m);
     }
 
-    // recurse into children
-    for (unsigned i = 0; i < node->mNumChildren; ++i) {
-        processNode(node->mChildren[i], scene, dir, meshes, global);
-    }
+    if (parent) parent->AddChild(entity);
+
+    for (unsigned i = 0; i < node->mNumChildren; ++i)
+        ProcessNode(node->mChildren[i], scene, dir, entity);
+
+    return entity;
 }
 
-// Public API: load all meshes from a model file
-std::vector<MeshIndexed*> ModelImporter::LoadModel(const std::string& path)
-{
+Entity3D* ModelImporter::LoadModelWithHierarchy(const std::string& path) {
     Assimp::Importer importer;
     const aiScene* scene = importer.ReadFile(
         path,
@@ -135,17 +161,16 @@ std::vector<MeshIndexed*> ModelImporter::LoadModel(const std::string& path)
         aiProcess_GenNormals | // generate normals if needed
         aiProcess_CalcTangentSpace
     );
-    if (!scene || !scene->mRootNode) {
-        // failed to load
-        return {};
+
+    if (!scene || !scene->mRootNode || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE) {
+        std::cerr << "ERROR::ASSIMP:: " << importer.GetErrorString() << std::endl;
+        return nullptr;
     }
 
     // extract directory to locate textures
     std::string dir = path.substr(0, path.find_last_of('/'));
-    std::vector<MeshIndexed*> meshes;
-    meshes.reserve(scene->mNumMeshes);
 
     // start recursion with identity transform
-    processNode(scene->mRootNode, scene, dir, meshes, glm::mat4(1.0f));
-    return meshes;
+    Entity3D* root = ProcessNode(scene->mRootNode, scene, dir, nullptr);
+    return root;
 }

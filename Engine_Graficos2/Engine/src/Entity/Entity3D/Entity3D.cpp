@@ -1,6 +1,7 @@
 #include "Entity3D.h"
 #include "RendererSingleton.h"
 
+
 Entity3D::Entity3D() : Entity() {}
 
 Entity3D::~Entity3D() {
@@ -25,10 +26,36 @@ void Entity3D::UpdateModel(bool isModelCreated) {
     }
 }
 
-void Entity3D::SetMaterialToMeshes()
+void Entity3D::SetMaterialToMeshes(bool recursive)
+{
+    for (auto* m : meshes)
+        m->SetMaterial(material);
+
+    if (recursive) {
+        for (Entity* c : GetChildren()) {
+            if (auto* e3d = dynamic_cast<Entity3D*>(c)) {
+                e3d->SetMaterial(material);
+                e3d->SetMaterialToMeshes(true);
+            }
+        }
+    }
+}
+
+void Entity3D::RenderRecursive(Camera* camera, 
+    const std::vector<DirectionalLight>& dirLights, 
+    const std::vector<PointLight>& pointLights, 
+    const std::vector<SpotLight>& spotLights)
 {
     for (auto* m : meshes) {
-        m->SetMaterial(material);
+        if (m->GetMaterial().diffuseTexture == 0 && material.useTexture)
+            m->SetMaterial(material);
+        m->Render(camera, dirLights, pointLights, spotLights);
+    }
+
+    for (Entity* c : GetChildren()) {
+        if (auto* e3d = dynamic_cast<Entity3D*>(c)) {
+            e3d->RenderRecursive(camera, dirLights, pointLights, spotLights);
+        }
     }
 }
 
@@ -38,7 +65,5 @@ void Entity3D::Render(
     const std::vector<PointLight>& pointLights,
     const std::vector<SpotLight>& spotLights
 ) {
-    for (auto* m : meshes) {
-        m->Render(camera, dirLights, pointLights, spotLights);
-    }
+    RenderRecursive(camera, dirLights, pointLights, spotLights);
 }

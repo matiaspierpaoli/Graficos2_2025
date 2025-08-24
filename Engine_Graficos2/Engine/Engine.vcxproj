@@ -98,6 +98,7 @@
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(ProjectDir)libs\;$(ProjectDir)src;$(ProjectDir)libs\assimp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalUsingDirectories>$(ProjectDir)src;</AdditionalUsingDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -168,6 +169,7 @@ xcopy "$(ProjectDir)shaders" "$(SolutionDir)Game\shaders" /e /s /y /r /i
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(ProjectDir)libs\;$(ProjectDir)src;$(ProjectDir)libs\assimp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalUsingDirectories>$(ProjectDir)src;</AdditionalUsingDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -232,6 +234,7 @@ xcopy "$(ProjectDir)shaders" "$(SolutionDir)Game\shaders" /e /s /y /r /i
     <ClInclude Include="src\Program\Program.h" />
     <ClInclude Include="src\RendererSingleton.h" />
     <ClInclude Include="src\Renderer\Renderer.h" />
+    <ClInclude Include="src\RigIndex.h" />
     <ClInclude Include="src\Sprite\Sprite.h" />
     <ClInclude Include="src\stb_image.h" />
     <ClInclude Include="src\TimeSingleton.h" />

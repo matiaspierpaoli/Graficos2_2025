@@ -8,6 +8,7 @@
 #include "Camera/Camera.h"
 #include "Light/Light.h"
 #include "Material/Material.h"
+#include <RigIndex.h>
 
 class Game : public BaseGame
 {
@@ -18,17 +19,28 @@ private:
 	Entity3D* floor;
 	Entity3D* wall;
 	Entity3D* cube;
-	Entity3D* backpack;
-	Entity3D* jet;
-	Entity3D* football;
-	Sprite* cubeFaces[6];
 	std::vector<Entity3D*> entities;
 	size_t selectedEntity;
+
+	// Tank hierarchy
+	ModelTree  tankTree;
+	Entity3D* tankRoot = nullptr;
+	Entity3D* tankTurret = nullptr;     // gira en yaw
+	Entity3D* wheelsLeft = nullptr;     // Base/Wheels_Left
+	Entity3D* wheelsRight = nullptr;     // Base/Wheels_Right
+
+	// inputs acumulados por frame
+	float turretYawInput = 0.0f;   // -1..1
+	float leftSlideInput = 0.0f;   // -1..1 (salir/entrar)
+	float rightSlideInput = 0.0f;   // -1..1
+
+	// offsets (para clamp opcional)
+	float leftOffset = 0.0f;
+	float rightOffset = 0.0f;
 
 	std::vector<DirectionalLight> directionalLights;
 	std::vector<PointLight> pointLights;
 	std::vector<SpotLight> spotLights;
-
 
 	Material goldMaterial;
 	Material mettalicMaterial;
@@ -55,18 +67,20 @@ private:
 
 	void checkCollisions(Entity2D* player1, Entity2D* player2);
 
+	Entity3D* LoadModel(const std::string& path,
+		const glm::vec3& pos,
+		const glm::vec3& scl,
+		const Material* overrideMat);
+
+	void ApplyMaterialRecursive(Entity3D* node, const Material& mat);
+
+	void CollectMeshes(Entity3D* node, std::vector<Mesh*>& out);
+
 	void UpdateInput();
 	void UpdatePlayer();
 	void UpdateCamera();
 	void UpdateScene();
 	void RenderScene();
-	void LoadModel(
-		const std::string& path,
-		const Material& material,
-		std::vector<Entity3D*>& entities,
-		const glm::vec3& position = glm::vec3(1.0f),
-		const glm::vec3& scale = glm::vec3(0.0f)
-	);
 
 public:
 	Game();

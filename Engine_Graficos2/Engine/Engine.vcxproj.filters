@@ -132,6 +132,12 @@
     <Filter Include="Archivos de origen\Mesh\MeshIndexed">
       <UniqueIdentifier>{4571dc8e-5ac9-401e-a8ce-325a320b89f5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Archivos de encabezado\ModelInstance">
+      <UniqueIdentifier>{48110a1b-3bc7-435b-bbe6-0b642d37546f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Archivos de origen\ModelInstance">
+      <UniqueIdentifier>{4fe06c4e-291d-4774-b7bc-3bfdfd664abe}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\fragmentShader.shader">
@@ -258,6 +264,9 @@
     </ClInclude>
     <ClInclude Include="src\Mesh\IndexedMesh\MeshIndexed.h">
       <Filter>Archivos de encabezado\Mesh\MeshIndexed</Filter>
+    </ClInclude>
+    <ClInclude Include="src\RigIndex.h">
+      <Filter>Archivos de encabezado</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

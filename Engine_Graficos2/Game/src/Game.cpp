@@ -177,7 +177,7 @@ void Game::Init()
 		"res/models/backpack/1001_albedo.jpg"
 	);
 
-	if (auto* backpackRoot = LoadModel("res/models/backpack/Survival_BackPack_2.fbx",
+	if (auto* backpackRoot = LoadModel("res/models/backpack/backpack.fbx",
 		{ 0, 3, 0 }, { 0.01f, 0.01f, 0.01f },
 		&backpackMat)) {
 		entities.push_back(backpackRoot);
